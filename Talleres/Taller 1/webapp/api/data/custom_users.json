@@ -1,0 +1,35 @@
+[
+  {
+    "userKey": "cu_1",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "BRYAN GUZMAN",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_2",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "WAR USER",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_3",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "JAPAN USER",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  }
+]

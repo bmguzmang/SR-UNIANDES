@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE/editor files
+.idea/
+.vscode/
+
+# Upload/cache/temp artifacts
+uploads/
+upload_cache/
+cache/
+tmp/
+temp/
+
+# Model artifacts
+models/
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# CSV files (keep only explicitly tracked examples if needed)
+*.csv
+!example*.csv
+!sample*.csv
