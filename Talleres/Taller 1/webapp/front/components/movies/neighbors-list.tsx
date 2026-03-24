@@ -33,7 +33,6 @@ export function NeighborsList({ neighbors }: { neighbors: MovieNeighbor[] }) {
                       {neighbor.title}
                       {neighbor.year ? ` (${neighbor.year})` : ""}
                     </Link>
-                    <p className="text-xs text-muted-foreground">movieId: {neighbor.movieId}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Similitud de Pearson</p>

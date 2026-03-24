@@ -26,6 +26,8 @@ import { useSessionStore } from "@/lib/store/session-store";
 import { formatRating } from "@/lib/utils/format";
 import type { RecommendationItem } from "@/types/domain";
 
+const TOP_N_OPTIONS = [5, 10, 15, 20] as const;
+
 function computeTopGenres(genres: string[][]): string[] {
   const counter = new Map<string, number>();
   genres.flat().forEach((genre) => {
@@ -41,7 +43,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const activeUser = useSessionStore((state) => state.activeUser);
   const [ratingsSort, setRatingsSort] = useState("recent");
-  const [topN, setTopN] = useState(6);
+  const [topN, setTopN] = useState<number>(TOP_N_OPTIONS[0]);
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationItem | null>(null);
   const [evaluationOpen, setEvaluationOpen] = useState(false);
@@ -101,13 +103,16 @@ export default function DashboardPage() {
               <p className="text-xs text-muted-foreground">Top N</p>
               <Select
                 value={String(topN)}
-                onValueChange={(value) => setTopN(Number(value))}
+                onValueChange={(value) => {
+                  const parsed = Number(value);
+                  setTopN(Math.min(20, Math.max(5, parsed)));
+                }}
               >
                 <SelectTrigger className="mt-1 w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[6, 12, 18, 24].map((option) => (
+                  {TOP_N_OPTIONS.map((option) => (
                     <SelectItem key={option} value={String(option)}>
                       {option}
                     </SelectItem>
@@ -128,7 +133,7 @@ export default function DashboardPage() {
           description="Estimadas por filtrado colaborativo item-item con Pearson."
         />
         {recommendationsQuery.isPending && recommendations.length === 0 ? (
-          <LoadingGrid count={6} />
+          <LoadingGrid count={topN} />
         ) : null}
         {recommendationsQuery.isError && recommendations.length === 0 ? (
           <ErrorState
@@ -144,7 +149,7 @@ export default function DashboardPage() {
             description="Genera un lote o agrega mas calificaciones al perfil activo."
           />
         ) : null}
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-4 2xl:grid-cols-6">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-4 2xl:grid-cols-5">
           {recommendations.map((item) => (
             <RecommendationCard
               key={item.movieId}

@@ -87,7 +87,6 @@ export function RatingsHistoryTable({
                     />
                     <div>
                       <p className="font-medium">{row.movieTitle}</p>
-                      <p className="text-xs text-muted-foreground">movieId: {row.movieId}</p>
                     </div>
                   </div>
                 </TableCell>

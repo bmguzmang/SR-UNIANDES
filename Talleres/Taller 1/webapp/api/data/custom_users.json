@@ -75,5 +75,27 @@
       "avgRating": null,
       "favoriteGenres": []
     }
+  },
+  {
+    "userKey": "cu_8",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Usuario1",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_9",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Usuario1",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
   }
 ]

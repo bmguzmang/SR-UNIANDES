@@ -190,9 +190,6 @@ export default function RecommendationExplanationPage() {
                     {movie.title}
                     {movie.year ? ` (${movie.year})` : ""}
                   </h2>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.08em] text-slate-300/85">
-                    movieId: {movie.movieId}
-                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-slate-200/25 bg-slate-950/45 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-200">

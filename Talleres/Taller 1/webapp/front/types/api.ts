@@ -23,6 +23,10 @@ export interface AddRatingsBulkRequest {
   ratings: BulkRatingEntry[];
 }
 
+export interface UserRatingsLookupRequest {
+  movieIds: number[];
+}
+
 export interface RecommendationsRequest {
   userKey: string;
   topN?: number;

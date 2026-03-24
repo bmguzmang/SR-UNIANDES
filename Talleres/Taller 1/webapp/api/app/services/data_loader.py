@@ -363,6 +363,31 @@ class DataStore:
             return {}
         return {int(row.movieId): float(row.rating) for row in df.itertuples()}
 
+    def get_user_ratings_for_movies(self, user_key: str, movie_ids: list[int]) -> dict[int, float]:
+        if not movie_ids:
+            return {}
+
+        source, source_id = self._parse_user_key(user_key)
+        if source == "movielens":
+            df = self.ratings_df[
+                (self.ratings_df["userId"] == source_id)
+                & (self.ratings_df["movieId"].isin(movie_ids))
+            ]
+        elif source == "custom":
+            df = self.custom_ratings_df[
+                (self.custom_ratings_df["userKey"] == user_key)
+                & (self.custom_ratings_df["movieId"].isin(movie_ids))
+            ]
+        else:
+            return {}
+
+        if df.empty:
+            return {}
+
+        # Keep the last rating when duplicates exist.
+        df = df.sort_values(by=["timestamp"], ascending=False).drop_duplicates(subset=["movieId"])
+        return {int(row.movieId): float(row.rating) for row in df.itertuples()}
+
     def get_user_evaluated_movie_ids(self, user_key: str) -> set[int]:
         df = self.evaluations_df[self.evaluations_df["userKey"] == user_key]
         if df.empty:
@@ -475,7 +500,10 @@ class DataStore:
         if year is not None:
             df = df[df["year"] == year]
 
-        items = [self.get_movie_summary(int(movie_id)) for movie_id in df["movieId"].head(limit).tolist()]
+        items = [
+            self.get_movie_summary(int(movie_id), include_stats=True)
+            for movie_id in df["movieId"].head(limit).tolist()
+        ]
         return {"items": [item for item in items if item is not None], "total": min(len(df), limit)}
 
     def _fetch_tmdb_image_via_api(self, tmdb_id: str) -> str | None:
@@ -551,16 +579,19 @@ class DataStore:
             self._persist_tmdb_image_cache()
         return image_url
 
-    def get_movie_summary(self, movie_id: int) -> dict | None:
+    def get_movie_summary(self, movie_id: int, include_stats: bool = False) -> dict | None:
         movie = self.movies_map.get(int(movie_id))
         if movie is None:
             return None
 
         tmdb_id = self.links_map.get(int(movie_id), {}).get("tmdbId")
-        return {
+        summary = {
             **movie,
             "image": self._resolve_tmdb_image(tmdb_id),
         }
+        if include_stats:
+            summary["stats"] = self.get_movie_stats(int(movie_id))
+        return summary
 
     def get_movie_stats(self, movie_id: int) -> dict:
         base = self.base_movie_stats_map.get(int(movie_id), {"ratingsCount": 0, "avgRating": None})

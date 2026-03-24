@@ -22,7 +22,6 @@ export function UserCard({ user, onLogin, loading }: UserCardProps) {
             </div>
             <div>
               <CardTitle className="text-base">{user.displayName}</CardTitle>
-              <p className="text-xs text-muted-foreground">{user.userKey}</p>
             </div>
           </div>
           <Badge variant="outline">{formatSource(user.source)}</Badge>

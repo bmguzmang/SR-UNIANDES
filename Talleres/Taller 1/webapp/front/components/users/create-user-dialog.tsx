@@ -98,7 +98,7 @@ export function CreateUserDialog({
             <Label htmlFor="displayName">Nombre visible</Label>
             <Input
               id="displayName"
-              placeholder="Bryan Guzman"
+              placeholder="Escribe un nombre para tu usuario personalizado"
               {...form.register("displayName")}
             />
             {form.formState.errors.displayName ? (

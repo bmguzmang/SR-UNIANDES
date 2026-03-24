@@ -21,12 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RATING_OPTIONS } from "@/lib/constants/ratings";
 import { useMovie, useMovieNeighbors } from "@/lib/hooks/use-movies";
 import { useAddUserRating } from "@/lib/hooks/use-users";
 import { useSessionStore } from "@/lib/store/session-store";
 import { formatRating } from "@/lib/utils/format";
-
-const RATING_OPTIONS = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
 
 export default function MovieDetailsPage() {
   const params = useParams<{ movieId?: string | string[] }>();
@@ -98,7 +97,6 @@ export default function MovieDetailsPage() {
                   {movieQuery.data.title}
                   {movieQuery.data.year ? ` (${movieQuery.data.year})` : ""}
                 </h2>
-                <p className="mt-1 text-xs text-slate-300/85">movieId: {movieQuery.data.movieId}</p>
               </div>
               <GenreBadges genres={movieQuery.data.genres} />
               <div className="grid gap-3 sm:grid-cols-3">

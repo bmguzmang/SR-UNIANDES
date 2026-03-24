@@ -12,6 +12,7 @@ import {
   addUserRating,
   addUserRatingsBulk,
   createUser,
+  getUserRatingsByMovieIds,
   getUser,
   getUserRatings,
   login,
@@ -80,6 +81,18 @@ export function useUserRatings(params: {
   });
 }
 
+export function useUserRatingsByMovieIds(userKey?: string, movieIds: number[] = []) {
+  const normalizedMovieIds = [...new Set(movieIds)].filter(Boolean).sort((a, b) => a - b);
+  return useQuery({
+    queryKey: ["user-ratings-by-movies", userKey ?? "unknown", normalizedMovieIds.join(",")],
+    queryFn: () =>
+      getUserRatingsByMovieIds(userKey as string, {
+        movieIds: normalizedMovieIds,
+      }),
+    enabled: Boolean(userKey) && normalizedMovieIds.length > 0,
+  });
+}
+
 export function useAddUserRating(userKey?: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -87,6 +100,7 @@ export function useAddUserRating(userKey?: string) {
     onSuccess: () => {
       if (!userKey) return;
       void queryClient.invalidateQueries({ queryKey: ["user-ratings", userKey] });
+      void queryClient.invalidateQueries({ queryKey: ["user-ratings-by-movies", userKey] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.user(userKey) });
       void queryClient.invalidateQueries({ queryKey: ["recommendations", userKey] });
     },
@@ -100,6 +114,7 @@ export function useAddUserRatingsBulk(userKey?: string) {
     onSuccess: () => {
       if (!userKey) return;
       void queryClient.invalidateQueries({ queryKey: ["user-ratings", userKey] });
+      void queryClient.invalidateQueries({ queryKey: ["user-ratings-by-movies", userKey] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.user(userKey) });
       void queryClient.invalidateQueries({ queryKey: ["recommendations", userKey] });
     },

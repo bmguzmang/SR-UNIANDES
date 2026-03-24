@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { MovieCard } from "@/components/movies/movie-card";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -9,8 +9,11 @@ import { LoadingGrid } from "@/components/shared/loading-grid";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Input } from "@/components/ui/input";
 import { useMoviesSearch } from "@/lib/hooks/use-movies";
+import { useUserRatingsByMovieIds } from "@/lib/hooks/use-users";
+import { useSessionStore } from "@/lib/store/session-store";
 
 export default function MoviesPage() {
+  const activeUser = useSessionStore((state) => state.activeUser);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
@@ -30,6 +33,21 @@ export default function MoviesPage() {
     query: debouncedQuery,
     limit: 24,
   });
+  const movieIds = useMemo(
+    () => (moviesQuery.data ?? []).map((movie) => movie.movieId),
+    [moviesQuery.data],
+  );
+  const userRatingsLookupQuery = useUserRatingsByMovieIds(activeUser?.userKey, movieIds);
+  const userRatingsMap = useMemo(
+    () =>
+      new Map(
+        Object.entries(userRatingsLookupQuery.data ?? {}).map(([movieId, rating]) => [
+          Number(movieId),
+          rating,
+        ]),
+      ),
+    [userRatingsLookupQuery.data],
+  );
 
   return (
     <div className="space-y-6">
@@ -71,7 +89,11 @@ export default function MoviesPage() {
       ) : null}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {moviesQuery.data?.map((movie) => (
-          <MovieCard key={movie.movieId} movie={movie} />
+          <MovieCard
+            key={movie.movieId}
+            movie={movie}
+            userRating={userRatingsMap.get(movie.movieId)}
+          />
         ))}
       </div>
     </div>

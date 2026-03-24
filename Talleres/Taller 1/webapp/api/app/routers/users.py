@@ -6,6 +6,8 @@ from app.schemas.user import (
     UserListResponse,
     UserRatingCreate,
     UserRatingBulkCreate,
+    UserRatingsLookupRequest,
+    UserRatingsLookupResponse,
     UserRatingsResponse,
     UserSummary,
 )
@@ -56,6 +58,28 @@ def get_user_ratings(
         "user": user,
         "items": store.get_user_ratings(user_key=user_key, sort=sort, limit=limit),
     }
+
+
+@router.post("/{user_key}/ratings/by-movies", response_model=UserRatingsLookupResponse)
+def get_user_ratings_by_movies(
+    user_key: str,
+    payload: UserRatingsLookupRequest,
+    request: Request,
+):
+    store = request.app.state.store
+    user = store.get_user_profile(user_key)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    ratings_map = store.get_user_ratings_for_movies(
+        user_key=user_key,
+        movie_ids=payload.movieIds,
+    )
+    items = [
+        {"movieId": movie_id, "rating": rating}
+        for movie_id, rating in ratings_map.items()
+    ]
+    return {"user": user, "items": items}
 
 
 @router.post("/{user_key}/ratings")

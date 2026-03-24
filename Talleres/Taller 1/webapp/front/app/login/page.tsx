@@ -131,7 +131,7 @@ function LoginScreen() {
                 <Input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Buscar usuarios (ej. ml_42)"
+                  placeholder="Buscar usuarios por nombre"
                   className="pl-9"
                 />
               </div>

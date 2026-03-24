@@ -25,6 +25,7 @@ import { MoviePoster } from "@/components/shared/movie-poster";
 import { SectionHeader } from "@/components/shared/section-header";
 import { useMoviesSearch } from "@/lib/hooks/use-movies";
 import { useAddUserRating, useAddUserRatingsBulk, useCreateUser, useLogin, useUserRatings } from "@/lib/hooks/use-users";
+import { RATING_OPTIONS } from "@/lib/constants/ratings";
 import { useSessionStore } from "@/lib/store/session-store";
 import { formatRating } from "@/lib/utils/format";
 import type { BulkRatingEntry, UserSource } from "@/types/api";
@@ -39,8 +40,6 @@ const createUserSchema = z.object({
 
 type Step = 1 | 2 | 3;
 type CreateUserInput = z.infer<typeof createUserSchema>;
-
-const ratingOptions = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
 
 export function OnboardingWizard() {
   const router = useRouter();
@@ -278,7 +277,6 @@ export function OnboardingWizard() {
                               {movie.title}
                               {movie.year ? ` (${movie.year})` : ""}
                             </p>
-                            <p className="text-xs text-muted-foreground">movieId: {movie.movieId}</p>
                           </div>
                           <GenreBadges genres={movie.genres} />
                           <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-end">
@@ -294,7 +292,7 @@ export function OnboardingWizard() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {ratingOptions.map((option) => (
+                                  {RATING_OPTIONS.map((option) => (
                                     <SelectItem key={option} value={String(option)}>
                                       {formatRating(option)}
                                     </SelectItem>
@@ -366,7 +364,7 @@ export function OnboardingWizard() {
                     key={entry.movieId}
                     className="flex items-center justify-between rounded-lg border border-border/60 bg-slate-900/60 px-3 py-2 text-sm"
                   >
-                    <span>movieId: {entry.movieId}</span>
+                    <span>Pelicula seleccionada</span>
                     <span className="font-semibold">{formatRating(entry.rating)}</span>
                   </div>
                 ))}

@@ -22,11 +22,11 @@ class MovieSummary(BaseModel):
     year: int | None = None
     genres: list[str] = Field(default_factory=list)
     image: str | None = None
+    stats: MovieStats | None = None
 
 
 class MovieDetail(MovieSummary):
     links: MovieLinks | None = None
-    stats: MovieStats | None = None
     topTags: list[TagWeight] = Field(default_factory=list)
 
 

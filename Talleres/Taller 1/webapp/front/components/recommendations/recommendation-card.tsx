@@ -70,7 +70,7 @@ export function RecommendationCard({
             }}
           >
             <ArrowRight className="h-4 w-4" />
-            Por que
+            ¿Para mí?
           </Button>
           <Button
             size="sm"

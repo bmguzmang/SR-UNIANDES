@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Star, Users } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { toast } from "sonner";
 import type { Movie } from "@/types/domain";
 import { MoviePoster } from "@/components/shared/movie-poster";
@@ -16,20 +16,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RATING_OPTIONS } from "@/lib/constants/ratings";
 import { useAddUserRating } from "@/lib/hooks/use-users";
 import { useSessionStore } from "@/lib/store/session-store";
 import { formatRating } from "@/lib/utils/format";
 
-const RATING_OPTIONS = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5];
+interface MovieCardProps {
+  movie: Movie;
+  userRating?: number;
+}
 
-export function MovieCard({ movie }: { movie: Movie }) {
+export function MovieCard({ movie, userRating }: MovieCardProps) {
   const activeUser = useSessionStore((state) => state.activeUser);
   const addUserRatingMutation = useAddUserRating(activeUser?.userKey);
-  const [ratingDraft, setRatingDraft] = useState("4");
+  const [draftOverride, setDraftOverride] = useState<string | null>(null);
+  const hasExistingRating = typeof userRating === "number" && !Number.isNaN(userRating);
+  const existingRatingValue = hasExistingRating ? String(userRating) : null;
+  const hasExactOptionMatch = hasExistingRating
+    ? RATING_OPTIONS.some((option) => option === userRating)
+    : true;
+  const ratingDraft = draftOverride ?? (existingRatingValue ?? "4");
+  const numericDraft = Number(ratingDraft);
+  const hasRatingChanged =
+    hasExistingRating && Math.abs(numericDraft - (userRating as number)) > 0.001;
 
   async function handleRateMovie() {
     if (!activeUser) {
       toast.error("No hay sesion activa");
+      return;
+    }
+    if (hasExistingRating && !hasRatingChanged) {
       return;
     }
 
@@ -40,9 +56,14 @@ export function MovieCard({ movie }: { movie: Movie }) {
         rating,
         timestamp: Math.floor(Date.now() / 1000),
       });
-      toast.success(`Calificacion guardada para ${movie.title}`, {
-        description: `${formatRating(rating)} estrellas`,
-      });
+      toast.success(
+        hasExistingRating
+          ? `Calificacion actualizada para ${movie.title}`
+          : `Calificacion guardada para ${movie.title}`,
+        {
+          description: `${formatRating(rating)} estrellas`,
+        },
+      );
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "No se pudo guardar la calificacion";
@@ -66,25 +87,36 @@ export function MovieCard({ movie }: { movie: Movie }) {
                 {movie.title}
                 {movie.year ? ` (${movie.year})` : ""}
               </h3>
-              <p className="text-xs text-muted-foreground">movieId: {movie.movieId}</p>
             </div>
             <GenreBadges genres={movie.genres} />
-            <div className="grid gap-2 text-xs sm:grid-cols-2">
+            <div className="grid gap-2 text-xs">
               <div className="flex items-center gap-1.5 rounded-lg bg-slate-900/60 px-2.5 py-2 text-muted-foreground">
                 <Star className="h-3.5 w-3.5 text-amber-300" />
-                <span className="text-foreground">{formatRating(movie.averageRating)}</span>
-              </div>
-              <div className="flex items-center gap-1.5 rounded-lg bg-slate-900/60 px-2.5 py-2 text-muted-foreground">
-                <Users className="h-3.5 w-3.5 text-sky-200" />
-                <span className="text-foreground">{movie.ratingCount ?? "N/D"}</span>
+                <span className="text-foreground">
+                  {`Promedio: ${
+                    movie.averageRating !== null && movie.averageRating !== undefined
+                      ? formatRating(movie.averageRating)
+                      : "--"
+                  }`}
+                </span>
               </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-              <Select value={ratingDraft} onValueChange={setRatingDraft}>
+              <Select value={ratingDraft} onValueChange={setDraftOverride}>
                 <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  {hasExistingRating ? (
+                    <div className="border-b border-border/60 px-2 py-1 text-xs text-muted-foreground">
+                      Calificacion actual: {formatRating(userRating)}
+                    </div>
+                  ) : null}
+                  {hasExistingRating && !hasExactOptionMatch ? (
+                    <SelectItem value={existingRatingValue as string}>
+                      {formatRating(userRating)}
+                    </SelectItem>
+                  ) : null}
                   {RATING_OPTIONS.map((option) => (
                     <SelectItem key={option} value={String(option)}>
                       {formatRating(option)}
@@ -99,7 +131,11 @@ export function MovieCard({ movie }: { movie: Movie }) {
                 }}
                 disabled={addUserRatingMutation.isPending}
               >
-                {addUserRatingMutation.isPending ? "Guardando..." : "Calificar"}
+                {addUserRatingMutation.isPending
+                  ? "Guardando..."
+                  : hasExistingRating && hasRatingChanged
+                    ? "Actualizar"
+                    : "Calificar"}
               </Button>
             </div>
             <Button asChild variant="outline" className="mt-auto w-full">
