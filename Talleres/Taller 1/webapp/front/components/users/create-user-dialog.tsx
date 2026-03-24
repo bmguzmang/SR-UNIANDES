@@ -22,8 +22,8 @@ import { useSessionStore } from "@/lib/store/session-store";
 const createUserSchema = z.object({
   displayName: z
     .string()
-    .min(2, "Display name is too short")
-    .max(60, "Display name is too long"),
+    .min(2, "El nombre visible es muy corto")
+    .max(60, "El nombre visible es muy largo"),
 });
 
 type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -65,16 +65,16 @@ export function CreateUserDialog({
         ...loggedInUser,
       });
 
-      toast.success("Custom user created", {
-        description: "Continue with onboarding by rating a few movies.",
+      toast.success("Usuario personalizado creado", {
+        description: "Continua con el onboarding calificando algunas peliculas.",
       });
       onOpenChange(false);
       form.reset();
       onCreated?.(createdUser.userKey);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not create custom user.";
-      toast.error("Creation failed", { description: message });
+        error instanceof Error ? error.message : "No se pudo crear el usuario personalizado.";
+      toast.error("Fallo la creacion", { description: message });
     }
   }
 
@@ -86,19 +86,19 @@ export function CreateUserDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-sky-300" />
-            Create Custom User
+            Crear usuario personalizado
           </DialogTitle>
           <DialogDescription>
-            Create a custom identity, then add initial ratings to prime the
-            recommender.
+            Crea una identidad personalizada y agrega calificaciones iniciales para
+            activar el recomendador.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="displayName">Display name</Label>
+            <Label htmlFor="displayName">Nombre visible</Label>
             <Input
               id="displayName"
-              placeholder="Bryan Guzman"
+              placeholder="Escribe un nombre para tu usuario personalizado"
               {...form.register("displayName")}
             />
             {form.formState.errors.displayName ? (
@@ -109,16 +109,16 @@ export function CreateUserDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={pending}>
               {pending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Creating...
+                  Creando...
                 </>
               ) : (
-                "Create and Continue"
+                "Crear y continuar"
               )}
             </Button>
           </DialogFooter>

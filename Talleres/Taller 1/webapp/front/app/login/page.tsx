@@ -54,11 +54,11 @@ function LoginScreen() {
     try {
       const loggedIn = await loginMutation.mutateAsync({ userKey: user.userKey });
       setActiveUser({ ...user, ...loggedIn });
-      toast.success(`Welcome ${user.displayName}`);
+      toast.success(`Bienvenido ${user.displayName}`);
       router.push(redirectPath);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Login failed";
-      toast.error("Could not log in", { description: message });
+      const message = error instanceof Error ? error.message : "Fallo de inicio de sesion";
+      toast.error("No se pudo iniciar sesion", { description: message });
     }
   }
 
@@ -73,25 +73,25 @@ function LoginScreen() {
                 CineMatch Intelligence
               </div>
               <h1 className="text-3xl font-semibold tracking-tight text-slate-50">
-                Cinematic Recommendation Intelligence
+                Inteligencia de recomendacion cinematica
               </h1>
               <p className="text-sm leading-relaxed text-slate-300">
-                Item-item collaborative filtering with Pearson similarity
-                (Surprise KNNWithMeans). Explore users, ratings, recommendations,
-                and interpretable evidence in one premium demo workspace.
+                Filtrado colaborativo item-item con similitud de Pearson
+                (Surprise KNNWithMeans). Explora usuarios, calificaciones, recomendaciones,
+                y evidencia interpretable en un unico espacio de demo premium.
               </p>
             </div>
 
             <div className="space-y-2 rounded-xl border border-slate-400/20 bg-slate-900/45 p-4 text-sm">
-              <p className="font-medium text-slate-100">System status</p>
+              <p className="font-medium text-slate-100">Estado del sistema</p>
               <p className="text-slate-300">
-                Health:{" "}
+                Salud:{" "}
                 <span className="font-semibold text-emerald-300">
-                  {healthQuery.data?.status ?? "unknown"}
+                  {healthQuery.data?.status ?? "desconocido"}
                 </span>
               </p>
               <p className="text-slate-300">
-                Model:{" "}
+                Modelo:{" "}
                 <span className="font-semibold text-slate-100">
                   {systemInfo.data?.modelName ?? "KNNWithMeans item-item"}
                 </span>
@@ -101,10 +101,10 @@ function LoginScreen() {
             {activeUser ? (
               <div className="rounded-xl border border-sky-300/20 bg-sky-500/10 p-4 text-sm">
                 <p className="font-medium text-sky-100">
-                  Session detected: {activeUser.displayName}
+                  Sesion detectada: {activeUser.displayName}
                 </p>
                 <Button className="mt-3" onClick={() => router.push("/dashboard")}>
-                  Continue to Dashboard
+                  Continuar al panel
                 </Button>
               </div>
             ) : null}
@@ -115,13 +115,13 @@ function LoginScreen() {
           <CardContent className="space-y-5 p-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold">Choose an identity</h2>
+                <h2 className="text-xl font-semibold">Elige una identidad</h2>
                 <p className="text-sm text-muted-foreground">
-                  Search existing MovieLens users or create a new custom user.
+                  Busca usuarios existentes de MovieLens o crea un usuario personalizado nuevo.
                 </p>
               </div>
               <Button onClick={() => setDialogOpen(true)}>
-                Create Custom User
+                Crear usuario personalizado
               </Button>
             </div>
 
@@ -131,7 +131,7 @@ function LoginScreen() {
                 <Input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search users (e.g. ml_42)"
+                  placeholder="Buscar usuarios por nombre"
                   className="pl-9"
                 />
               </div>
@@ -140,9 +140,9 @@ function LoginScreen() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All sources</SelectItem>
+                  <SelectItem value="all">Todos los origenes</SelectItem>
                   <SelectItem value="movielens">MovieLens</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="custom">Personalizado</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -151,7 +151,7 @@ function LoginScreen() {
 
             {usersQuery.isError ? (
               <ErrorState
-                description="User listing failed. Verify `/api/v1/users` in backend."
+                description="Fallo el listado de usuarios. Verifica `/api/v1/users` en el backend."
                 onRetry={() => {
                   void usersQuery.refetch();
                 }}
@@ -160,11 +160,11 @@ function LoginScreen() {
 
             {!usersQuery.isLoading && usersQuery.data?.length === 0 ? (
               <EmptyState
-                title="No users found"
-                description="Adjust the search term or create a custom user to continue."
+                title="No se encontraron usuarios"
+                description="Ajusta la busqueda o crea un usuario personalizado para continuar."
                 action={
                   <Button variant="outline" onClick={() => setDialogOpen(true)}>
-                    Create user
+                    Crear usuario
                   </Button>
                 }
               />
@@ -204,3 +204,4 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+

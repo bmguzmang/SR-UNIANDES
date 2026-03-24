@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Search, UserCircle2 } from "lucide-react";
+import { LogOut, UserCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { useSystemInfo } from "@/lib/hooks/use-system";
 import { useLogout } from "@/lib/hooks/use-users";
 import { useSessionStore } from "@/lib/store/session-store";
@@ -40,7 +39,7 @@ export function AppTopbar() {
       // Ignore logout errors and clear local session for demo continuity.
     } finally {
       clearActiveUser();
-      toast.success("Session closed");
+      toast.success("Sesion cerrada");
       router.replace("/login");
     }
   }
@@ -57,7 +56,7 @@ export function AppTopbar() {
         </div>
         <div className="md:hidden">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/movies">Movies</Link>
+            <Link href="/movies">Peliculas</Link>
           </Button>
         </div>
         <DropdownMenu>
@@ -68,7 +67,7 @@ export function AppTopbar() {
               </Avatar>
               <span className="hidden text-xs md:block">
                 <span className="block max-w-[140px] truncate font-medium">
-                  {activeUser?.displayName || "Guest"}
+                  {activeUser?.displayName || "Invitado"}
                 </span>
                 <span className="block text-muted-foreground">
                   {formatSource(activeUser?.source)}
@@ -78,10 +77,7 @@ export function AppTopbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/users/new">Onboard User</Link>
+              <Link href="/dashboard">Panel</Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
@@ -89,7 +85,7 @@ export function AppTopbar() {
               }}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Log out
+              Cerrar sesion
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

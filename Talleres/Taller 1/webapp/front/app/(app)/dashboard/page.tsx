@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart3, Heart, Loader2, Sparkle, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BarChart3, Heart, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -22,11 +21,12 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { EvaluationDialog } from "@/components/recommendations/evaluation-dialog";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { useRecommendationEvaluations, useRecommendations } from "@/lib/hooks/use-recommendations";
-import { useSystemInfo } from "@/lib/hooks/use-system";
 import { useUserProfile, useUserRatings } from "@/lib/hooks/use-users";
 import { useSessionStore } from "@/lib/store/session-store";
 import { formatRating } from "@/lib/utils/format";
 import type { RecommendationItem } from "@/types/domain";
+
+const TOP_N_OPTIONS = [5, 10, 15, 20] as const;
 
 function computeTopGenres(genres: string[][]): string[] {
   const counter = new Map<string, number>();
@@ -43,7 +43,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const activeUser = useSessionStore((state) => state.activeUser);
   const [ratingsSort, setRatingsSort] = useState("recent");
-  const [topN, setTopN] = useState(6);
+  const [topN, setTopN] = useState<number>(TOP_N_OPTIONS[0]);
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationItem | null>(null);
   const [evaluationOpen, setEvaluationOpen] = useState(false);
@@ -80,21 +80,21 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="User ratings"
+          label="Calificaciones del usuario"
           value={`${profile?.ratingCount ?? ratings.length}`}
-          helper="Historical interactions"
+          helper="Interacciones historicas"
           icon={BarChart3}
         />
         <StatCard
-          label="Average rating"
+          label="Calificacion promedio"
           value={formatRating(avgRating)}
-          helper="Taste intensity"
+          helper="Intensidad de gusto"
           icon={Star}
         />
         <StatCard
-          label="Top genres"
-          value={topGenres.length ? topGenres.join(" · ") : "N/A"}
-          helper="Preference profile"
+          label="Generos principales"
+          value={topGenres.length ? topGenres.join(" | ") : "N/D"}
+          helper="Perfil de preferencias"
           icon={Heart}
         />
         <Card className="bg-slate-950/45">
@@ -103,13 +103,16 @@ export default function DashboardPage() {
               <p className="text-xs text-muted-foreground">Top N</p>
               <Select
                 value={String(topN)}
-                onValueChange={(value) => setTopN(Number(value))}
+                onValueChange={(value) => {
+                  const parsed = Number(value);
+                  setTopN(Math.min(20, Math.max(5, parsed)));
+                }}
               >
                 <SelectTrigger className="mt-1 w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[6, 12, 18, 24].map((option) => (
+                  {TOP_N_OPTIONS.map((option) => (
                     <SelectItem key={option} value={String(option)}>
                       {option}
                     </SelectItem>
@@ -118,7 +121,7 @@ export default function DashboardPage() {
               </Select>
             </div>
             <p className="text-xs text-muted-foreground">
-              Recommendation batch size
+              Tamano del lote de recomendaciones
             </p>
           </CardContent>
         </Card>
@@ -126,15 +129,15 @@ export default function DashboardPage() {
 
       <section className="space-y-3">
         <SectionHeader
-          title="Top Recommendations"
-          description="Predicted by item-item Pearson collaborative filtering."
+          title="Recomendaciones principales"
+          description="Estimadas por filtrado colaborativo item-item con Pearson."
         />
         {recommendationsQuery.isPending && recommendations.length === 0 ? (
-          <LoadingGrid count={6} />
+          <LoadingGrid count={topN} />
         ) : null}
         {recommendationsQuery.isError && recommendations.length === 0 ? (
           <ErrorState
-            description="Recommendation request failed. Verify `/api/v1/recommendations`."
+            description="Fallo la solicitud de recomendaciones. Verifica `/api/v1/recommendations`."
           />
         ) : null}
         {!recommendationsQuery.isFetching &&
@@ -142,11 +145,11 @@ export default function DashboardPage() {
         !recommendationsQuery.isError &&
         recommendations.length === 0 ? (
           <EmptyState
-            title="No recommendations yet"
-            description="Generate a batch or add more ratings to the active profile."
+            title="Aun no hay recomendaciones"
+            description="Genera un lote o agrega mas calificaciones al perfil activo."
           />
         ) : null}
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-4 2xl:grid-cols-6">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-4 2xl:grid-cols-5">
           {recommendations.map((item) => (
             <RecommendationCard
               key={item.movieId}
@@ -173,8 +176,8 @@ export default function DashboardPage() {
 
       <section className="space-y-3">
         <SectionHeader
-          title="Evaluation History"
-          description="Explicit user feedback on delivered recommendations."
+          title="Historial de evaluaciones"
+          description="Retroalimentacion explicita del usuario sobre recomendaciones entregadas."
         />
         {evaluationsQuery.isLoading ? <LoadingGrid count={2} /> : null}
         {evaluationsQuery.data?.length ? (
@@ -182,8 +185,8 @@ export default function DashboardPage() {
         ) : null}
         {!evaluationsQuery.isLoading && !evaluationsQuery.data?.length ? (
           <EmptyState
-            title="No evaluations yet"
-            description="Use Evaluate on recommendation cards to record outcomes."
+            title="Aun no hay evaluaciones"
+            description="Usa Evaluar en las tarjetas de recomendacion para registrar resultados."
           />
         ) : null}
       </section>

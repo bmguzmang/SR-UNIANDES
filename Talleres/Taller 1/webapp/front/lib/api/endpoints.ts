@@ -7,6 +7,7 @@ import type {
   RecommendationEvaluationRequest,
   RecommendationsRequest,
   SystemInfoResponse,
+  UserRatingsLookupRequest,
   UserSource,
 } from "@/types/api";
 import type {
@@ -20,7 +21,7 @@ import type {
   UserRating,
   UserSummary,
 } from "@/types/domain";
-import { apiRequest, withQuery } from "@/lib/api/client";
+import { ApiError, apiRequest, withQuery } from "@/lib/api/client";
 import {
   coerceArrayPayload,
   parseEvaluation,
@@ -35,6 +36,50 @@ import {
 } from "@/lib/utils/guards";
 
 const API_PREFIX = "/api/v1";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function readRatingsLookupItems(payload: unknown): unknown[] {
+  if (Array.isArray(payload)) return payload;
+  if (!isRecord(payload)) return [];
+  const directItems = payload.items;
+  if (Array.isArray(directItems)) return directItems;
+  const nestedData = payload.data;
+  if (isRecord(nestedData) && Array.isArray(nestedData.items)) return nestedData.items;
+  return [];
+}
+
+function parseRatingsLookup(payload: unknown): Record<number, number> {
+  const items = readRatingsLookupItems(payload);
+  const lookup: Record<number, number> = {};
+
+  items.forEach((item) => {
+    if (!isRecord(item)) return;
+    const movieRef = isRecord(item.movie) ? item.movie : {};
+    const movieIdRaw = item.movieId ?? item.movie_id ?? movieRef.movieId ?? movieRef.movie_id;
+    const ratingRaw = item.rating ?? item.userRating ?? item.user_rating;
+    const movieId =
+      typeof movieIdRaw === "number"
+        ? movieIdRaw
+        : typeof movieIdRaw === "string"
+          ? Number(movieIdRaw)
+          : Number.NaN;
+    const rating =
+      typeof ratingRaw === "number"
+        ? ratingRaw
+        : typeof ratingRaw === "string"
+          ? Number(ratingRaw)
+          : Number.NaN;
+
+    if (!Number.isNaN(movieId) && !Number.isNaN(rating)) {
+      lookup[movieId] = rating;
+    }
+  });
+
+  return lookup;
+}
 
 export async function getHealth(): Promise<HealthResponse> {
   return apiRequest<HealthResponse>(`${API_PREFIX}/health`);
@@ -111,6 +156,39 @@ export async function getUserRatings(params: {
   );
   const response = await apiRequest<unknown>(path);
   return coerceArrayPayload(response).map(parseUserRating);
+}
+
+export async function getUserRatingsByMovieIds(
+  userKey: string,
+  payload: UserRatingsLookupRequest,
+): Promise<Record<number, number>> {
+  try {
+    const response = await apiRequest<unknown>(
+      `${API_PREFIX}/users/${encodeURIComponent(userKey)}/ratings/by-movies`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
+    return parseRatingsLookup(response);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      const fallbackItems = await getUserRatings({
+        userKey,
+        sort: "recent",
+        limit: 200,
+      });
+      const requestedMovieIds = new Set(payload.movieIds);
+      const fallbackLookup: Record<number, number> = {};
+      fallbackItems.forEach((item) => {
+        if (requestedMovieIds.has(item.movieId)) {
+          fallbackLookup[item.movieId] = item.rating;
+        }
+      });
+      return fallbackLookup;
+    }
+    throw error;
+  }
 }
 
 export async function addUserRating(

@@ -44,6 +44,20 @@ class UserRatingsResponse(BaseModel):
     items: list[UserRatingItem]
 
 
+class UserRatingsLookupRequest(BaseModel):
+    movieIds: list[int] = Field(default_factory=list, max_length=100)
+
+
+class UserRatingLookupItem(BaseModel):
+    movieId: int
+    rating: float
+
+
+class UserRatingsLookupResponse(BaseModel):
+    user: UserSummary
+    items: list[UserRatingLookupItem]
+
+
 class UserListResponse(BaseModel):
     items: list[UserSummary]
     total: int

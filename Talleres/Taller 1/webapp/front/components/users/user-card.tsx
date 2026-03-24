@@ -22,7 +22,6 @@ export function UserCard({ user, onLogin, loading }: UserCardProps) {
             </div>
             <div>
               <CardTitle className="text-base">{user.displayName}</CardTitle>
-              <p className="text-xs text-muted-foreground">{user.userKey}</p>
             </div>
           </div>
           <Badge variant="outline">{formatSource(user.source)}</Badge>
@@ -30,17 +29,17 @@ export function UserCard({ user, onLogin, loading }: UserCardProps) {
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-lg bg-slate-900/70 p-2">
-          <p className="text-xs text-muted-foreground">Ratings</p>
+          <p className="text-xs text-muted-foreground">Calificaciones</p>
           <p className="text-sm font-semibold">{user.ratingCount}</p>
         </div>
         <div className="rounded-lg bg-slate-900/70 p-2">
-          <p className="text-xs text-muted-foreground">Average</p>
+          <p className="text-xs text-muted-foreground">Promedio</p>
           <p className="text-sm font-semibold">{formatRating(user.averageRating)}</p>
         </div>
       </CardContent>
       <CardFooter>
         <Button onClick={() => onLogin(user)} disabled={loading} className="w-full">
-          Log In as This User
+          Iniciar sesion con este usuario
         </Button>
       </CardFooter>
     </Card>

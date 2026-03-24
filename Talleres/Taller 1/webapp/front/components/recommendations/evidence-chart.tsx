@@ -13,7 +13,7 @@ import type { MovieNeighbor } from "@/types/domain";
 
 export function EvidenceChart({ neighbors }: { neighbors: MovieNeighbor[] }) {
   const chartData = neighbors.slice(0, 6).map((neighbor) => ({
-    name: neighbor.title.length > 18 ? `${neighbor.title.slice(0, 18)}…` : neighbor.title,
+    name: neighbor.title.length > 18 ? `${neighbor.title.slice(0, 18)}...` : neighbor.title,
     similarity: Number(neighbor.similarity.toFixed(3)),
     contribution: Number((neighbor.contribution ?? 0).toFixed(3)),
   }));

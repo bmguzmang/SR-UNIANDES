@@ -31,5 +31,71 @@
       "avgRating": null,
       "favoriteGenres": []
     }
+  },
+  {
+    "userKey": "cu_4",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Lorraine",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_5",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Lorraine Rojas",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_6",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Lorena",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_7",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Lorena",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_8",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Usuario1",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_9",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Usuario1",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
   }
 ]

@@ -33,7 +33,13 @@ import { useSessionStore } from "@/lib/store/session-store";
 const evaluationSchema = z.object({
   feedback: z.enum(["liked", "disliked", "not_interested", "already_seen"]),
   actualRating: z
-    .union([z.string().length(0), z.coerce.number().min(0.5).max(5)])
+    .union([
+      z.string().length(0),
+      z.coerce
+        .number()
+        .min(0.5, "La calificacion minima es 0.5")
+        .max(5, "La calificacion maxima es 5"),
+    ])
     .optional(),
 });
 
@@ -46,10 +52,10 @@ interface EvaluationDialogProps {
 }
 
 const feedbackLabels: Record<RecommendationFeedback, string> = {
-  liked: "Liked",
-  disliked: "Disliked",
-  not_interested: "Not interested",
-  already_seen: "Already seen",
+  liked: "Le gusto",
+  disliked: "No le gusto",
+  not_interested: "No le interesa",
+  already_seen: "Ya la vi",
 };
 
 export function EvaluationDialog({
@@ -91,14 +97,14 @@ export function EvaluationDialog({
             ? values.actualRating
             : null,
       });
-      toast.success("Evaluation saved");
+      toast.success("Evaluacion guardada");
       onOpenChange(false);
       form.reset();
       setFeedbackValue("liked");
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not submit evaluation";
-      toast.error("Submission failed", { description: message });
+        error instanceof Error ? error.message : "No se pudo enviar la evaluacion";
+      toast.error("Fallo el envio", { description: message });
     }
   }
 
@@ -106,9 +112,9 @@ export function EvaluationDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Evaluate Recommendation</DialogTitle>
+          <DialogTitle>Evaluar recomendacion</DialogTitle>
           <DialogDescription>
-            Record qualitative feedback for {recommendation?.title || "this movie"}.
+            Registra feedback cualitativo para {recommendation?.title || "esta pelicula"}.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +122,7 @@ export function EvaluationDialog({
           <div className="rounded-lg border border-border/60 bg-slate-900/60 p-3">
             <div className="flex items-center gap-3">
               <MoviePoster
-                title={recommendation?.title ?? "Movie"}
+                title={recommendation?.title ?? "Pelicula"}
                 image={recommendation?.image}
                 className="h-16 w-11 shrink-0 rounded-md"
                 showFallbackLabel={false}
@@ -127,13 +133,13 @@ export function EvaluationDialog({
                   {recommendation?.year ? ` (${recommendation.year})` : ""}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Predicted score: {recommendation ? recommendation.predictedRating.toFixed(2) : "N/A"}
+                  Puntaje estimado: {recommendation ? recommendation.predictedRating.toFixed(2) : "N/D"}
                 </p>
               </div>
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Feedback</Label>
+            <Label>Opinion</Label>
             <Select
               value={feedbackValue}
               onValueChange={(value) => {
@@ -155,7 +161,7 @@ export function EvaluationDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="actualRating">Actual rating (optional)</Label>
+            <Label htmlFor="actualRating">Calificacion real (opcional)</Label>
             <Input
               id="actualRating"
               type="number"
@@ -173,13 +179,13 @@ export function EvaluationDialog({
           </div>
           <DialogFooter>
             <Button variant="ghost" type="button" onClick={() => onOpenChange(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button type="submit" disabled={evaluationMutation.isPending || !recommendation}>
               {evaluationMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving...
+                  Guardando...
                 </>
               ) : (
                 <>
@@ -188,7 +194,7 @@ export function EvaluationDialog({
                   ) : (
                     <ThumbsDown className="h-4 w-4" />
                   )}
-                  Submit Evaluation
+                  Enviar evaluacion
                 </>
               )}
             </Button>

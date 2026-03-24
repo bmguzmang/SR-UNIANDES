@@ -47,7 +47,7 @@ export function RatingsHistoryTable({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle className="text-base">Ratings History</CardTitle>
+        <CardTitle className="text-base">Historial de calificaciones</CardTitle>
         <Select
           value={sort}
           onValueChange={(value) => {
@@ -59,8 +59,8 @@ export function RatingsHistoryTable({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="recent">Most recent</SelectItem>
-            <SelectItem value="rating_desc">Highest ratings</SelectItem>
+            <SelectItem value="recent">Mas recientes</SelectItem>
+            <SelectItem value="rating_desc">Calificaciones mas altas</SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>
@@ -68,10 +68,10 @@ export function RatingsHistoryTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Movie</TableHead>
-              <TableHead>Genres</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>Pelicula</TableHead>
+              <TableHead>Generos</TableHead>
+              <TableHead>Calificacion</TableHead>
+              <TableHead>Fecha</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -87,7 +87,6 @@ export function RatingsHistoryTable({
                     />
                     <div>
                       <p className="font-medium">{row.movieTitle}</p>
-                      <p className="text-xs text-muted-foreground">movieId: {row.movieId}</p>
                     </div>
                   </div>
                 </TableCell>
@@ -107,11 +106,11 @@ export function RatingsHistoryTable({
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             {ratings.length === 0
-              ? "No ratings to show"
-              : `Showing ${startIndex + 1}-${endIndex} of ${ratings.length}`}
+              ? "No hay calificaciones para mostrar"
+              : `Mostrando ${startIndex + 1}-${endIndex} de ${ratings.length}`}
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Rows</span>
+            <span className="text-xs text-muted-foreground">Filas</span>
             <Select
               value={String(rowsPerPage)}
               onValueChange={(value) => {
@@ -137,7 +136,7 @@ export function RatingsHistoryTable({
               onClick={() => setCurrentPage(Math.max(1, page - 1))}
               disabled={page <= 1}
             >
-              Previous
+              Anterior
             </Button>
             <span className="min-w-16 text-center text-xs text-muted-foreground">
               {page} / {totalPages}
@@ -149,7 +148,7 @@ export function RatingsHistoryTable({
               onClick={() => setCurrentPage(Math.min(totalPages, page + 1))}
               disabled={page >= totalPages}
             >
-              Next
+              Siguiente
             </Button>
           </div>
         </div>

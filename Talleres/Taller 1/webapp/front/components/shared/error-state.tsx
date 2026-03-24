@@ -9,8 +9,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = "Unable to load data",
-  description = "Please check backend availability and try again.",
+  title = "No se pudieron cargar los datos",
+  description = "Revisa la disponibilidad del backend e intentalo de nuevo.",
   onRetry,
 }: ErrorStateProps) {
   return (
@@ -23,7 +23,7 @@ export function ErrorState({
         </div>
         {onRetry ? (
           <Button variant="outline" onClick={onRetry}>
-            Retry
+            Reintentar
           </Button>
         ) : null}
       </CardContent>

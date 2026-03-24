@@ -8,7 +8,7 @@ export function NeighborsList({ neighbors }: { neighbors: MovieNeighbor[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Similar Movies (Neighbors)</CardTitle>
+        <CardTitle className="text-base">Peliculas similares (vecinas)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {neighbors.map((neighbor) => (
@@ -33,10 +33,9 @@ export function NeighborsList({ neighbors }: { neighbors: MovieNeighbor[] }) {
                       {neighbor.title}
                       {neighbor.year ? ` (${neighbor.year})` : ""}
                     </Link>
-                    <p className="text-xs text-muted-foreground">movieId: {neighbor.movieId}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Pearson similarity</p>
+                    <p className="text-xs text-muted-foreground">Similitud de Pearson</p>
                     <p className="font-semibold text-sky-200">
                       {neighbor.similarity.toFixed(3)}
                     </p>

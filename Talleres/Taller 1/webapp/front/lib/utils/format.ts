@@ -19,29 +19,29 @@ export function extractYearFromTitle(title?: string | null): number | null {
 }
 
 export function cleanMovieTitle(title?: string | null): string {
-  if (!title) return "Unknown title";
+  if (!title) return "Titulo desconocido";
   return title.replace(/\s\(\d{4}\)$/, "").trim();
 }
 
-export function formatRating(value?: number | null, fallback = "N/A"): string {
+export function formatRating(value?: number | null, fallback = "N/D"): string {
   if (typeof value !== "number" || Number.isNaN(value)) return fallback;
   return value.toFixed(2);
 }
 
 export function formatCompactNumber(value?: number | null): string {
-  if (typeof value !== "number" || Number.isNaN(value)) return "N/A";
-  return new Intl.NumberFormat("en-US", { notation: "compact" }).format(value);
+  if (typeof value !== "number" || Number.isNaN(value)) return "N/D";
+  return new Intl.NumberFormat("es-CO", { notation: "compact" }).format(value);
 }
 
 export function formatDate(value?: string | number | null): string {
-  if (!value) return "Unknown";
+  if (!value) return "Desconocida";
   const parsed =
     typeof value === "number"
       ? new Date(value * 1000)
       : new Date(value.toString());
 
-  if (Number.isNaN(parsed.getTime())) return "Unknown";
-  return new Intl.DateTimeFormat("en-US", {
+  if (Number.isNaN(parsed.getTime())) return "Desconocida";
+  return new Intl.DateTimeFormat("es-CO", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -49,9 +49,9 @@ export function formatDate(value?: string | number | null): string {
 }
 
 export function formatSource(source?: string): string {
-  if (!source) return "Unknown source";
+  if (!source) return "Origen desconocido";
   if (source === "movielens") return "MovieLens";
-  if (source === "custom") return "Custom";
+  if (source === "custom") return "Personalizado";
   return source;
 }
 

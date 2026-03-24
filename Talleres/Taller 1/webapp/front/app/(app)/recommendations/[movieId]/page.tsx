@@ -126,18 +126,18 @@ export default function RecommendationExplanationPage() {
         <Button variant="ghost" size="sm" asChild className="w-fit">
           <Link href="/dashboard">
             <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
+            Volver al panel
           </Link>
         </Button>
       </div>
 
       <SectionHeader
-        title="Recommendation Explanation"
-        description="Transparent evidence for why this movie was recommended."
+        title="Explicacion de recomendacion"
+        description="Evidencia transparente de por que se recomendo esta pelicula."
         action={(
           <div className="hidden items-center gap-1 rounded-full border border-sky-300/30 bg-sky-500/10 px-2 py-1 text-xs text-sky-200 md:inline-flex">
             <Sparkles className="h-3 w-3" />
-            Explainability view
+            Vista de explicabilidad
           </div>
         )}
       />
@@ -172,7 +172,7 @@ export default function RecommendationExplanationPage() {
       ) : null}
 
       {explanationQuery.isError && movieQuery.isError ? (
-        <ErrorState description="Could not load explanation or movie details." />
+        <ErrorState description="No se pudo cargar la explicacion ni el detalle de la pelicula." />
       ) : null}
 
       {movie ? (
@@ -190,13 +190,10 @@ export default function RecommendationExplanationPage() {
                     {movie.title}
                     {movie.year ? ` (${movie.year})` : ""}
                   </h2>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.08em] text-slate-300/85">
-                    movieId: {movie.movieId}
-                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-slate-200/25 bg-slate-950/45 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-200">
-                    Prediction
+                    Prediccion
                   </span>
                   {isExplanationLoading ? (
                     <Skeleton className="h-7 w-20 rounded-full" />
@@ -207,7 +204,7 @@ export default function RecommendationExplanationPage() {
                     <Skeleton className="h-6 w-20 rounded-full" />
                   ) : explanation?.rank ? (
                     <span className="rounded-full border border-slate-300/30 bg-slate-950/45 px-2 py-0.5 text-xs">
-                      Rank #{explanation.rank}
+                      Puesto #{explanation.rank}
                     </span>
                   ) : null}
                 </div>
@@ -218,7 +215,7 @@ export default function RecommendationExplanationPage() {
               <div className="rounded-lg border border-sky-200/20 bg-slate-950/45 px-3 py-2 text-sm leading-relaxed text-slate-100">
                 <p className="mb-1 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.08em] text-sky-200">
                   <BrainCircuit className="h-3.5 w-3.5" />
-                  Why this recommendation
+                  Por que esta recomendacion
                 </p>
                 {isExplanationLoading ? (
                   <div className="space-y-2">
@@ -233,7 +230,7 @@ export default function RecommendationExplanationPage() {
 
               <div className="grid gap-2 sm:grid-cols-3">
                 <div className="rounded-lg border border-slate-300/15 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-slate-300">Global avg rating</p>
+                  <p className="text-[11px] text-slate-300">Promedio global</p>
                   <div className="text-base font-semibold">
                     {isExplanationLoading ? (
                       <Skeleton className="h-5 w-12" />
@@ -243,15 +240,15 @@ export default function RecommendationExplanationPage() {
                   </div>
                 </div>
                 <div className="rounded-lg border border-slate-300/15 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-slate-300">Rating count</p>
+                  <p className="text-[11px] text-slate-300">Cantidad de calificaciones</p>
                   <p className="text-base font-semibold">
-                    {explanation?.globalStats.ratingCount ?? movie.ratingCount ?? "N/A"}
+                    {explanation?.globalStats.ratingCount ?? movie.ratingCount ?? "N/D"}
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-300/15 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-slate-300">Popularity rank</p>
+                  <p className="text-[11px] text-slate-300">Puesto de popularidad</p>
                   <p className="text-base font-semibold">
-                    {explanation?.globalStats.popularityRank ?? movie.popularityRank ?? "N/A"}
+                    {explanation?.globalStats.popularityRank ?? movie.popularityRank ?? "N/D"}
                   </p>
                 </div>
               </div>
@@ -273,7 +270,7 @@ export default function RecommendationExplanationPage() {
                   onClick={() => setEvaluationOpen(true)}
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  Evaluate
+                  Evaluar
                 </Button>
               </div>
             </div>
@@ -284,9 +281,9 @@ export default function RecommendationExplanationPage() {
       <div className="grid gap-3 2xl:grid-cols-[1.35fr_1fr]">
         <Card className="border-white/10">
           <CardHeader className="p-4 pb-2">
-            <CardTitle className="text-sm">Strongest Neighbor Evidence</CardTitle>
+            <CardTitle className="text-sm">Evidencia vecina mas fuerte</CardTitle>
             <p className="text-xs text-muted-foreground">
-              Similar movies this user rated highly and their contribution to the prediction.
+              Peliculas similares que este usuario califico alto y su contribucion a la prediccion.
             </p>
           </CardHeader>
           <CardContent className="space-y-3 p-4 pt-0">
@@ -332,13 +329,13 @@ export default function RecommendationExplanationPage() {
                             {neighbor.year ? ` (${neighbor.year})` : ""}
                           </p>
                           <p className="mt-1 text-[11px] text-slate-300/85">
-                            Similarity {neighbor.similarity.toFixed(3)}
+                            Similitud {neighbor.similarity.toFixed(3)}
                           </p>
                           <div className="mt-1.5">
                             {neighbor.userRating ? (
                               <RatingPill rating={neighbor.userRating} />
                             ) : (
-                              <span className="text-[11px] text-muted-foreground">No user rating</span>
+                              <span className="text-[11px] text-muted-foreground">Sin calificacion del usuario</span>
                             )}
                           </div>
                         </div>
@@ -349,8 +346,8 @@ export default function RecommendationExplanationPage() {
               </>
             ) : (
               <EmptyState
-                title="No neighbor evidence"
-                description="The API did not return neighbor evidence for this explanation."
+                title="Sin evidencia vecina"
+                description="La API no devolvio evidencia vecina para esta explicacion."
               />
             )}
           </CardContent>
@@ -358,9 +355,9 @@ export default function RecommendationExplanationPage() {
 
         <Card className="border-white/10">
           <CardHeader className="p-4 pb-2">
-            <CardTitle className="text-sm">Relevant User History</CardTitle>
+            <CardTitle className="text-sm">Historial relevante del usuario</CardTitle>
             <p className="text-xs text-muted-foreground">
-              Past interactions that align with this recommendation.
+              Interacciones pasadas que se alinean con esta recomendacion.
             </p>
           </CardHeader>
           <CardContent className="space-y-2 p-4 pt-0">
@@ -400,8 +397,8 @@ export default function RecommendationExplanationPage() {
                       </p>
                       <p className="line-clamp-1 text-[11px] text-slate-300/85">
                         {rating.genres.length
-                          ? rating.genres.slice(0, 3).join(" • ")
-                          : "Unspecified genre"}
+                          ? rating.genres.slice(0, 3).join(" | ")
+                          : "Genero no especificado"}
                       </p>
                     </div>
                     <RatingPill rating={rating.rating} />
@@ -410,8 +407,8 @@ export default function RecommendationExplanationPage() {
               ))
             ) : (
               <EmptyState
-                title="No relevant ratings"
-                description="Rate a few movies first to expose historical evidence."
+                title="Sin calificaciones relevantes"
+                description="Califica algunas peliculas primero para mostrar evidencia historica."
               />
             )}
           </CardContent>
@@ -420,9 +417,9 @@ export default function RecommendationExplanationPage() {
 
       <Card className="border-white/10">
         <CardHeader className="p-4 pb-2">
-          <CardTitle className="text-sm">More Like This</CardTitle>
+          <CardTitle className="text-sm">Mas como esta</CardTitle>
           <p className="text-xs text-muted-foreground">
-            Item-item neighborhood displayed as a compact poster grid.
+            Vecindario item-item mostrado como una cuadricula compacta de posters.
           </p>
         </CardHeader>
         <CardContent className="space-y-3 p-4 pt-0">
@@ -469,7 +466,7 @@ export default function RecommendationExplanationPage() {
               {movieNeighborsTotalPages > 1 ? (
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                   <p className="text-xs text-muted-foreground">
-                    Page {currentMovieNeighborsPage} of {movieNeighborsTotalPages}
+                    Pagina {currentMovieNeighborsPage} de {movieNeighborsTotalPages}
                   </p>
                   <div className="flex items-center gap-2">
                     <Button
@@ -485,7 +482,7 @@ export default function RecommendationExplanationPage() {
                       disabled={currentMovieNeighborsPage === 1}
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      Anterior
                     </Button>
                     <Button
                       variant="outline"
@@ -499,7 +496,7 @@ export default function RecommendationExplanationPage() {
                       }
                       disabled={currentMovieNeighborsPage === movieNeighborsTotalPages}
                     >
-                      Next
+                      Siguiente
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -508,8 +505,8 @@ export default function RecommendationExplanationPage() {
             </>
           ) : (
             <EmptyState
-              title="No neighbors available"
-              description="No item-item neighbors were returned for this movie."
+              title="No hay vecinos disponibles"
+              description="No se devolvieron vecinos item-item para esta pelicula."
             />
           )}
         </CardContent>
@@ -523,3 +520,4 @@ export default function RecommendationExplanationPage() {
     </div>
   );
 }
+

@@ -10,8 +10,8 @@ export function buildNarrative(explanation: RecommendationExplanation): string {
   const evidenceMovies = topNeighbors.map((item) => item.title).join(", ");
 
   if (topNeighbors.length > 0) {
-    return `Because this user rated similar movies highly (${evidenceMovies}), the item-item Pearson model expects a strong match for ${explanation.movie.title}. The strongest evidence comes from neighboring movies with high similarity and positive user ratings.`;
+    return `Como este usuario califico alto peliculas similares (${evidenceMovies}), el modelo item-item de Pearson espera una coincidencia fuerte para ${explanation.movie.title}. La evidencia principal viene de peliculas vecinas con alta similitud y calificaciones positivas del usuario.`;
   }
 
-  return `This recommendation is driven by item-item collaborative filtering with Pearson similarity. The model found neighboring movies close to ${explanation.movie.title} and projected a predicted rating of ${formatRating(explanation.predictedRating)} for this user.`;
+  return `Esta recomendacion esta impulsada por filtrado colaborativo item-item con similitud de Pearson. El modelo encontro peliculas vecinas cercanas a ${explanation.movie.title} y proyecto una calificacion estimada de ${formatRating(explanation.predictedRating)} para este usuario.`;
 }

@@ -57,7 +57,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
       detail = "";
     }
 
-    throw new ApiError(detail || "Request failed", response.status, detail);
+    throw new ApiError(detail || "Solicitud fallida", response.status, detail);
   }
 
   if (response.status === 204) return {} as T;
