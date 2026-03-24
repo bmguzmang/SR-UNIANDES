@@ -86,8 +86,9 @@ export function useAddUserRating(userKey?: string) {
     mutationFn: (payload: AddRatingRequest) => addUserRating(userKey as string, payload),
     onSuccess: () => {
       if (!userKey) return;
-      void queryClient.invalidateQueries({ queryKey: queryKeys.userRatings(userKey, "recent", 50) });
+      void queryClient.invalidateQueries({ queryKey: ["user-ratings", userKey] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.user(userKey) });
+      void queryClient.invalidateQueries({ queryKey: ["recommendations", userKey] });
     },
   });
 }
@@ -100,6 +101,7 @@ export function useAddUserRatingsBulk(userKey?: string) {
       if (!userKey) return;
       void queryClient.invalidateQueries({ queryKey: ["user-ratings", userKey] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.user(userKey) });
+      void queryClient.invalidateQueries({ queryKey: ["recommendations", userKey] });
     },
   });
 }

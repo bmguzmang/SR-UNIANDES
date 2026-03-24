@@ -110,13 +110,13 @@ export function coerceArrayPayload(payload: unknown): unknown[] {
 export function parseUserSummary(input: unknown): UserSummary {
   const record = isRecord(input) ? input : {};
   const stats = parseStats(record);
-  const userKey = toString(pick(record, "userKey", "user_key", "key"), "unknown");
+  const userKey = toString(pick(record, "userKey", "user_key", "key"), "desconocido");
 
   return {
     userKey,
     displayName: toString(
       pick(record, "displayName", "display_name", "name"),
-      "Anonymous User",
+      "Usuario anonimo",
     ),
     source: parseSource(pick(record, "source"), userKey),
     datasetUserId: toNullableNumber(pick(record, "datasetUserId", "dataset_user_id")),
@@ -161,7 +161,7 @@ export function parseUserProfile(input: unknown): UserProfile {
 export function parseMovie(input: unknown): Movie {
   const record = isRecord(input) ? input : {};
   const stats = parseStats(record);
-  const rawTitle = toString(pick(record, "title", "movieTitle", "movie_title"), "Unknown title");
+  const rawTitle = toString(pick(record, "title", "movieTitle", "movie_title"), "Titulo desconocido");
   const yearValue = pick(record, "year");
   const yearFromField =
     yearValue === undefined || yearValue === null || yearValue === ""
@@ -430,12 +430,12 @@ export function parseSystemInfo(input: unknown): SystemInfo {
 
   const algorithm = (() => {
     if (!family) {
-      return "Item-item collaborative filtering with Pearson similarity";
+      return "Filtrado colaborativo item-item con similitud de Pearson";
     }
 
     const details: string[] = [];
-    if (similarity) details.push(`similarity: ${similarity}`);
-    if (typeof userBased === "boolean") details.push(userBased ? "user-based" : "item-item");
+    if (similarity) details.push(`similitud: ${similarity}`);
+    if (typeof userBased === "boolean") details.push(userBased ? "basado en usuario" : "item-item");
 
     return details.length ? `${family} (${details.join(", ")})` : family;
   })();

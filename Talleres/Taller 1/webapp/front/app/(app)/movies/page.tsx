@@ -34,13 +34,13 @@ export default function MoviesPage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Movie Explorer"
-        description="Search titles and inspect item-item neighbor structure."
+        title="Explorador de peliculas"
+        description="Busca titulos, calificalos y mejora las recomendaciones del panel."
       />
       <div className="relative max-w-xl">
         <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search movies by title (e.g. Toy Story, Matrix)"
+          placeholder="Buscar peliculas por titulo (ej. Toy Story, Matrix)"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           className="pl-9"
@@ -49,15 +49,15 @@ export default function MoviesPage() {
 
       {!hasInput ? (
         <EmptyState
-          title="Start searching"
-          description="Type a movie title to browse catalog results and navigate to details."
+          title="Empieza a buscar"
+          description="Escribe un titulo para ver resultados del catalogo y navegar al detalle."
         />
       ) : null}
 
       {moviesQuery.isLoading ? <LoadingGrid count={6} /> : null}
       {moviesQuery.isError ? (
         <ErrorState
-          description="Movie search failed. Verify backend `/api/v1/movies`."
+          description="Fallo la busqueda de peliculas. Verifica el backend `/api/v1/movies`."
           onRetry={() => {
             void moviesQuery.refetch();
           }}
@@ -65,8 +65,8 @@ export default function MoviesPage() {
       ) : null}
       {!moviesQuery.isLoading && debouncedQuery.length > 0 && !moviesQuery.data?.length ? (
         <EmptyState
-          title="No matches"
-          description="Try a different keyword or shorter title fragment."
+          title="Sin coincidencias"
+          description="Prueba otra palabra clave o un fragmento de titulo mas corto."
         />
       ) : null}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

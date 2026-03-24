@@ -11,7 +11,7 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "CineMatch Intelligence",
   description:
-    "Premium frontend for MovieLens recommender explanations and evaluations.",
+    "Frontend premium para explicaciones y evaluaciones del recomendador MovieLens.",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="es" className="dark">
       <body className={jakarta.className}>
         <AppProviders>{children}</AppProviders>
       </body>

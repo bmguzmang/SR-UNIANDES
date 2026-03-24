@@ -31,7 +31,10 @@ import type { BulkRatingEntry, UserSource } from "@/types/api";
 import type { Movie } from "@/types/domain";
 
 const createUserSchema = z.object({
-  displayName: z.string().min(2).max(60),
+  displayName: z
+    .string()
+    .min(2, "El nombre visible es muy corto")
+    .max(60, "El nombre visible es muy largo"),
 });
 
 type Step = 1 | 2 | 3;
@@ -92,12 +95,12 @@ export function OnboardingWizard() {
         ...loggedIn,
         source: (createdUser.source || "custom") as UserSource,
       });
-      toast.success("Custom user ready");
+      toast.success("Usuario personalizado listo");
       setStep(2);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not create user";
-      toast.error("Creation failed", { description: message });
+        error instanceof Error ? error.message : "No se pudo crear el usuario";
+      toast.error("Fallo la creacion", { description: message });
     }
   }
 
@@ -118,13 +121,13 @@ export function OnboardingWizard() {
         rating,
         timestamp: Math.floor(Date.now() / 1000),
       });
-      toast.success(`Rated ${movie.title}`, {
-        description: `Saved ${formatRating(rating)} stars`,
+      toast.success(`Calificaste ${movie.title}`, {
+        description: `Se guardaron ${formatRating(rating)} estrellas`,
       });
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not save rating";
-      toast.error("Rating failed", { description: message });
+        error instanceof Error ? error.message : "No se pudo guardar la calificacion";
+      toast.error("Fallo la calificacion", { description: message });
     }
   }
 
@@ -134,8 +137,8 @@ export function OnboardingWizard() {
       const rest = current.filter((entry) => entry.movieId !== movie.movieId);
       return [...rest, { movieId: movie.movieId, rating }];
     });
-    toast.success(`${movie.title} staged`, {
-      description: `${formatRating(rating)} stars will be submitted in bulk.`,
+    toast.success(`${movie.title} agregado`, {
+      description: `${formatRating(rating)} estrellas se enviaran en lote.`,
     });
   }
 
@@ -144,19 +147,19 @@ export function OnboardingWizard() {
     try {
       await addBulkMutation.mutateAsync({ ratings: stagedRatings });
       setStagedRatings([]);
-      toast.success("Bulk ratings submitted");
+      toast.success("Calificaciones en lote enviadas");
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not submit ratings";
-      toast.error("Bulk submission failed", { description: message });
+        error instanceof Error ? error.message : "No se pudieron enviar las calificaciones";
+      toast.error("Fallo el envio en lote", { description: message });
     }
   }
 
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Custom User Onboarding"
-        description="Create a profile, add ratings, and generate personalized recommendations."
+        title="Configuracion inicial de usuario personalizado"
+        description="Crea un perfil, agrega calificaciones y genera recomendaciones personalizadas."
       />
 
       <div className="grid gap-3 sm:grid-cols-3">
@@ -170,9 +173,9 @@ export function OnboardingWizard() {
                 {item}
               </span>
               <span className="text-sm">
-                {item === 1 && "Create user"}
-                {item === 2 && "Rate movies"}
-                {item === 3 && "Finalize"}
+                {item === 1 && "Crear usuario"}
+                {item === 2 && "Calificar peliculas"}
+                {item === 3 && "Finalizar"}
               </span>
             </CardContent>
           </Card>
@@ -182,9 +185,9 @@ export function OnboardingWizard() {
       {step === 1 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Create Custom Identity</CardTitle>
+            <CardTitle>Crear identidad personalizada</CardTitle>
             <CardDescription>
-              This user will be stored as a custom account.
+              Este usuario se guardara como cuenta personalizada.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -193,10 +196,10 @@ export function OnboardingWizard() {
               onSubmit={form.handleSubmit(handleCreateUser)}
             >
               <div className="space-y-2">
-                <Label htmlFor="displayName">Display name</Label>
+                <Label htmlFor="displayName">Nombre visible</Label>
                 <Input
                   id="displayName"
-                  placeholder="Your name"
+                  placeholder="Tu nombre"
                   {...form.register("displayName")}
                 />
                 {form.formState.errors.displayName ? (
@@ -209,12 +212,12 @@ export function OnboardingWizard() {
                 {createUserMutation.isPending || loginMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating...
+                    Creando...
                   </>
                 ) : (
                   <>
                     <Wand2 className="h-4 w-4" />
-                    Create and Continue
+                    Crear y continuar
                   </>
                 )}
               </Button>
@@ -226,16 +229,16 @@ export function OnboardingWizard() {
       {step >= 2 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Search and Rate Movies</CardTitle>
+            <CardTitle>Buscar y calificar peliculas</CardTitle>
             <CardDescription>
-              Add at least a few ratings so the recommender has signal.
+              Agrega al menos algunas calificaciones para que el recomendador tenga senal.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by title..."
+                placeholder="Buscar por titulo..."
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 className="pl-9"
@@ -243,7 +246,7 @@ export function OnboardingWizard() {
             </div>
             {moviesQuery.isError ? (
               <ErrorState
-                description="Movie search failed. Verify backend `/api/v1/movies`."
+                description="Fallo la busqueda de peliculas. Verifica el backend `/api/v1/movies`."
                 onRetry={() => {
                   void moviesQuery.refetch();
                 }}
@@ -251,8 +254,8 @@ export function OnboardingWizard() {
             ) : null}
             {searchQuery.trim().length > 0 && moviesQuery.data?.length === 0 && !moviesQuery.isLoading ? (
               <EmptyState
-                title="No movies found"
-                description="Try a broader query, e.g. `toy`, `matrix`, `star`."
+                title="No se encontraron peliculas"
+                description="Prueba una busqueda mas amplia, por ejemplo: `toy`, `matrix`, `star`."
               />
             ) : null}
             <div className="grid gap-3 lg:grid-cols-2">
@@ -280,7 +283,7 @@ export function OnboardingWizard() {
                           <GenreBadges genres={movie.genres} />
                           <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-end">
                             <div className="space-y-1">
-                              <Label>Rating</Label>
+                              <Label>Calificacion</Label>
                               <Select
                                 value={String(draft)}
                                 onValueChange={(value) =>
@@ -306,19 +309,19 @@ export function OnboardingWizard() {
                               }}
                               disabled={addUserRatingMutation.isPending || !activeUser}
                             >
-                              Save now
+                              Guardar ahora
                             </Button>
                             <Button
                               onClick={() => stageRating(movie)}
                               disabled={!activeUser}
                             >
                               <Plus className="h-4 w-4" />
-                              {stagedValue ? "Update stage" : "Stage"}
+                              {stagedValue ? "Actualizar lote" : "Agregar a lote"}
                             </Button>
                           </div>
                           {stagedValue ? (
                             <p className="text-xs text-sky-200">
-                              Staged rating: {formatRating(stagedValue)}
+                              Calificacion en lote: {formatRating(stagedValue)}
                             </p>
                           ) : null}
                         </div>
@@ -330,8 +333,8 @@ export function OnboardingWizard() {
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-slate-900/50 p-3">
               <p className="text-sm text-muted-foreground">
-                Existing ratings: <span className="font-semibold text-foreground">{existingRatingsCount}</span> |
-                Staged for bulk: <span className="font-semibold text-foreground">{stagedRatings.length}</span>
+                Calificaciones existentes: <span className="font-semibold text-foreground">{existingRatingsCount}</span> |
+                En lote: <span className="font-semibold text-foreground">{stagedRatings.length}</span>
               </p>
               <div className="flex gap-2">
                 <Button
@@ -339,7 +342,7 @@ export function OnboardingWizard() {
                   onClick={() => setStep(3)}
                   disabled={totalPreparedRatings < 3}
                 >
-                  Continue
+                  Continuar
                 </Button>
               </div>
             </div>
@@ -350,9 +353,9 @@ export function OnboardingWizard() {
       {step === 3 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Finalize Setup</CardTitle>
+            <CardTitle>Finalizar configuracion</CardTitle>
             <CardDescription>
-              Submit staged ratings in bulk and open personalized recommendations.
+              Envia las calificaciones en lote y abre recomendaciones personalizadas.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -370,8 +373,8 @@ export function OnboardingWizard() {
               </div>
             ) : (
               <EmptyState
-                title="No staged ratings"
-                description="You can still continue if you already rated movies with Save now."
+                title="No hay calificaciones en lote"
+                description="Igual puedes continuar si ya calificaste peliculas con Guardar ahora."
               />
             )}
             <div className="flex flex-wrap gap-2">
@@ -379,7 +382,7 @@ export function OnboardingWizard() {
                 variant="outline"
                 onClick={() => setStep(2)}
               >
-                Back
+                Atras
               </Button>
               <Button
                 onClick={() => {
@@ -390,10 +393,10 @@ export function OnboardingWizard() {
                 {addBulkMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting...
+                    Enviando...
                   </>
                 ) : (
-                  "Submit Staged Ratings"
+                  "Enviar calificaciones en lote"
                 )}
               </Button>
               <Button
@@ -402,12 +405,12 @@ export function OnboardingWizard() {
                 disabled={totalPreparedRatings < 3}
               >
                 <CheckCircle2 className="h-4 w-4" />
-                Open Recommendations
+                Abrir recomendaciones
               </Button>
             </div>
             {totalPreparedRatings < 3 ? (
               <p className="text-xs text-amber-300">
-                Add at least 3 ratings for a better first recommendation batch.
+                Agrega al menos 3 calificaciones para un mejor primer lote de recomendaciones.
               </p>
             ) : null}
           </CardContent>

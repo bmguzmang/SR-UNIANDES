@@ -38,7 +38,7 @@ export function MoviePoster({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageSrc}
-            alt={`${title} poster`}
+            alt={`Poster de ${title}`}
             loading="lazy"
             className={cn("h-full w-full object-cover", imageClassName)}
           />
@@ -49,7 +49,7 @@ export function MoviePoster({
           <Film className="h-6 w-6" />
           {showFallbackLabel ? (
             <span className="text-[11px] uppercase tracking-wide text-slate-300/90">
-              Poster unavailable
+              Poster no disponible
             </span>
           ) : null}
         </div>

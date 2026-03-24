@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Gauge, Sparkles, UserPlus } from "lucide-react";
+import { Compass, Gauge, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Gauge },
-  { href: "/users/new", label: "New User", icon: UserPlus },
-  { href: "/movies", label: "Movies", icon: Compass },
+  { href: "/dashboard", label: "Panel", icon: Gauge },
+  { href: "/movies", label: "Peliculas", icon: Compass },
 ];
 
 export function AppSidebar() {
@@ -25,12 +24,11 @@ export function AppSidebar() {
             </div>
             <div>
               <p className="text-sm font-semibold text-slate-100">CineMatch Intelligence</p>
-              <p className="text-xs text-slate-300">Recommender Studio</p>
+              <p className="text-xs text-slate-300">Estudio de Recomendacion</p>
             </div>
           </div>
           <p className="mt-3 text-xs leading-relaxed text-slate-300/90">
-            Item-item collaborative filtering with Pearson similarity using
-            KNNWithMeans.
+            Filtrado colaborativo item-item con similitud de Pearson usando KNNWithMeans.
           </p>
           <Badge variant="outline" className="mt-3 border-sky-300/30 bg-sky-400/10 text-sky-200">
             MovieLens 20M

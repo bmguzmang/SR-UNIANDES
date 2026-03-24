@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function GenreBadges({ genres }: { genres: string[] }) {
   if (!genres.length) {
-    return <Badge variant="outline">Unspecified genre</Badge>;
+    return <Badge variant="outline">Genero no especificado</Badge>;
   }
 
   return (

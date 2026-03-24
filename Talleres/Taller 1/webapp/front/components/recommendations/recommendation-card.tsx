@@ -3,7 +3,6 @@ import type { RecommendationItem } from "@/types/domain";
 import { MoviePoster } from "@/components/shared/movie-poster";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { RatingPill } from "@/components/shared/rating-pill";
 
 interface RecommendationCardProps {
   recommendation: RecommendationItem;
@@ -20,8 +19,8 @@ export function RecommendationCard({
     ? `${recommendation.title} (${recommendation.year})`
     : recommendation.title;
   const genreLabel = recommendation.genres.length
-    ? recommendation.genres.slice(0, 2).join(" • ")
-    : "Unspecified genre";
+    ? recommendation.genres.slice(0, 2).join(" | ")
+    : "Genero no especificado";
 
   return (
     <Card
@@ -47,7 +46,7 @@ export function RecommendationCard({
 
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-3">
         <span className="rounded-full border border-red-500/50 bg-red-600/80 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
-          Rank #{recommendation.rank}
+          Puesto #{recommendation.rank}
         </span>
       </div>
 
@@ -71,7 +70,7 @@ export function RecommendationCard({
             }}
           >
             <ArrowRight className="h-4 w-4" />
-            Why this
+            Por que
           </Button>
           <Button
             size="sm"
@@ -83,7 +82,7 @@ export function RecommendationCard({
             }}
           >
             <MessageCircleMore className="h-4 w-4" />
-            Evaluate
+            Evaluar
           </Button>
         </div>
       </div>
