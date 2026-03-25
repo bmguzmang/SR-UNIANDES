@@ -71,6 +71,10 @@ export function useSubmitRecommendationEvaluation(userKey?: string) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.evaluations(userKey, 50),
       });
+      void queryClient.invalidateQueries({ queryKey: ["user-ratings", userKey] });
+      void queryClient.invalidateQueries({ queryKey: ["user-ratings-by-movies", userKey] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.user(userKey) });
+      void queryClient.invalidateQueries({ queryKey: ["recommendations", userKey] });
     },
   });
 }

@@ -97,5 +97,60 @@
       "avgRating": null,
       "favoriteGenres": []
     }
+  },
+  {
+    "userKey": "cu_10",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Alvaro",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_11",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Alvaro",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_12",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Prueba",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_13",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Prueba23",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_14",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "Prueba23",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
   }
 ]

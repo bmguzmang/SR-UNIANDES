@@ -311,7 +311,23 @@ class DataStore:
         source, source_id = self._parse_user_key(user_key)
 
         if source == "movielens":
-            return self.ratings_df[self.ratings_df["userId"] == source_id].copy()
+            base_df = self.ratings_df[self.ratings_df["userId"] == source_id][
+                ["movieId", "rating", "timestamp"]
+            ].copy()
+            custom_df = self.custom_ratings_df[self.custom_ratings_df["userKey"] == user_key][
+                ["movieId", "rating", "timestamp"]
+            ].copy()
+            if custom_df.empty:
+                return base_df
+
+            # Custom ratings act as user-level overrides on top of MovieLens base data.
+            base_without_overridden = base_df[
+                ~base_df["movieId"].isin(custom_df["movieId"])
+            ].copy()
+            return pd.concat(
+                [base_without_overridden, custom_df],
+                ignore_index=True,
+            )
 
         if source == "custom":
             return self.custom_ratings_df[self.custom_ratings_df["userKey"] == user_key].copy()
@@ -367,19 +383,10 @@ class DataStore:
         if not movie_ids:
             return {}
 
-        source, source_id = self._parse_user_key(user_key)
-        if source == "movielens":
-            df = self.ratings_df[
-                (self.ratings_df["userId"] == source_id)
-                & (self.ratings_df["movieId"].isin(movie_ids))
-            ]
-        elif source == "custom":
-            df = self.custom_ratings_df[
-                (self.custom_ratings_df["userKey"] == user_key)
-                & (self.custom_ratings_df["movieId"].isin(movie_ids))
-            ]
-        else:
+        df = self.get_user_ratings_df(user_key)
+        if df.empty:
             return {}
+        df = df[df["movieId"].isin(movie_ids)]
 
         if df.empty:
             return {}
@@ -406,11 +413,11 @@ class DataStore:
 
     def upsert_custom_user_ratings(self, user_key: str, ratings: list[dict]) -> int:
         source, _ = self._parse_user_key(user_key)
-        if source != "custom":
-            raise ValueError("Solo se pueden agregar ratings a usuarios custom")
+        if source not in ("custom", "movielens"):
+            raise ValueError("Solo se pueden agregar ratings a usuarios validos")
 
         if self.get_user_summary(user_key) is None:
-            raise ValueError("Usuario custom no encontrado")
+            raise ValueError("Usuario no encontrado")
 
         now = int(time.time())
 
@@ -464,6 +471,19 @@ class DataStore:
             ignore_index=True,
         )
         self._persist_evaluations()
+
+        actual_rating = payload.get("actualRating")
+        if actual_rating is not None and not pd.isna(actual_rating):
+            self.upsert_custom_user_ratings(
+                user_key=payload["userKey"],
+                ratings=[
+                    {
+                        "movieId": int(payload["movieId"]),
+                        "rating": float(actual_rating),
+                        "timestamp": now,
+                    }
+                ],
+            )
 
     def get_user_evaluations(self, user_key: str, limit: int = 50) -> list[dict]:
         df = self.evaluations_df[self.evaluations_df["userKey"] == user_key].copy()

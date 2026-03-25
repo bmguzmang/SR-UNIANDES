@@ -40,6 +40,9 @@ const createUserSchema = z.object({
 
 type Step = 1 | 2 | 3;
 type CreateUserInput = z.infer<typeof createUserSchema>;
+type StagedRatingEntry = BulkRatingEntry & {
+  movieTitle: string;
+};
 
 export function OnboardingWizard() {
   const router = useRouter();
@@ -49,7 +52,7 @@ export function OnboardingWizard() {
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearch = useDeferredValue(searchQuery);
   const [ratingDrafts, setRatingDrafts] = useState<Record<number, number>>({});
-  const [stagedRatings, setStagedRatings] = useState<BulkRatingEntry[]>([]);
+  const [stagedRatings, setStagedRatings] = useState<StagedRatingEntry[]>([]);
 
   const createUserMutation = useCreateUser();
   const loginMutation = useLogin();
@@ -132,9 +135,10 @@ export function OnboardingWizard() {
 
   function stageRating(movie: Movie) {
     const rating = getDraft(movie);
+    const movieTitleLabel = movie.year ? `${movie.title} (${movie.year})` : movie.title;
     setStagedRatings((current) => {
       const rest = current.filter((entry) => entry.movieId !== movie.movieId);
-      return [...rest, { movieId: movie.movieId, rating }];
+      return [...rest, { movieId: movie.movieId, rating, movieTitle: movieTitleLabel }];
     });
     toast.success(`${movie.title} agregado`, {
       description: `${formatRating(rating)} estrellas se enviaran en lote.`,
@@ -144,7 +148,12 @@ export function OnboardingWizard() {
   async function submitBulkRatings() {
     if (!activeUser || stagedRatings.length === 0) return;
     try {
-      await addBulkMutation.mutateAsync({ ratings: stagedRatings });
+      await addBulkMutation.mutateAsync({
+        ratings: stagedRatings.map((entry) => ({
+          movieId: entry.movieId,
+          rating: entry.rating,
+        })),
+      });
       setStagedRatings([]);
       toast.success("Calificaciones en lote enviadas");
     } catch (error) {
@@ -364,7 +373,7 @@ export function OnboardingWizard() {
                     key={entry.movieId}
                     className="flex items-center justify-between rounded-lg border border-border/60 bg-slate-900/60 px-3 py-2 text-sm"
                   >
-                    <span>Pelicula seleccionada</span>
+                    <span>{entry.movieTitle}</span>
                     <span className="font-semibold">{formatRating(entry.rating)}</span>
                   </div>
                 ))}

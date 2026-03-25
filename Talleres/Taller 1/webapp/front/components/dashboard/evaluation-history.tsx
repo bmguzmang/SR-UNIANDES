@@ -1,7 +1,7 @@
 import type { RecommendationEvaluation } from "@/types/domain";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate, formatRating } from "@/lib/utils/format";
+import { formatDate } from "@/lib/utils/format";
 
 const feedbackStyles: Record<
   RecommendationEvaluation["feedback"],
@@ -26,7 +26,6 @@ export function EvaluationHistory({
       <CardContent className="space-y-2">
         {items.map((item) => {
           const style = feedbackStyles[item.feedback] || feedbackStyles.liked;
-          const rankLabel = item.recommendationRank ? `#${item.recommendationRank}` : "N/D";
           return (
             <div
               key={`${item.movieId}-${item.createdAt ?? item.recommendationRank ?? "na"}`}
@@ -34,17 +33,9 @@ export function EvaluationHistory({
             >
               <div>
                 <p className="text-sm font-medium">{item.movieTitle}</p>
-                <p className="text-xs text-muted-foreground">
-                  Puesto {rankLabel} | Estimada {formatRating(item.predictedRating)}
-                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={style.variant}>{style.label}</Badge>
-                {item.actualRating !== null && item.actualRating !== undefined ? (
-                  <span className="text-xs text-muted-foreground">
-                    Real {formatRating(item.actualRating)}
-                  </span>
-                ) : null}
                 <span className="text-xs text-muted-foreground">{formatDate(item.createdAt)}</span>
               </div>
             </div>

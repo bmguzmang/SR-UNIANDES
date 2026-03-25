@@ -17,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -27,20 +26,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MoviePoster } from "@/components/shared/movie-poster";
+import { RATING_OPTIONS } from "@/lib/constants/ratings";
 import { useSubmitRecommendationEvaluation } from "@/lib/hooks/use-recommendations";
 import { useSessionStore } from "@/lib/store/session-store";
 
 const evaluationSchema = z.object({
   feedback: z.enum(["liked", "disliked", "not_interested", "already_seen"]),
   actualRating: z
-    .union([
-      z.string().length(0),
-      z.coerce
-        .number()
-        .min(0.5, "La calificacion minima es 0.5")
-        .max(5, "La calificacion maxima es 5"),
-    ])
-    .optional(),
+    .string()
+    .refine(
+      (value) =>
+        value === "none" ||
+        RATING_OPTIONS.some((option) => String(option) === value),
+      "Selecciona una calificacion valida",
+    ),
 });
 
 type EvaluationInput = z.infer<typeof evaluationSchema>;
@@ -67,12 +66,13 @@ export function EvaluationDialog({
   const evaluationMutation = useSubmitRecommendationEvaluation(activeUser?.userKey);
   const [feedbackValue, setFeedbackValue] =
     useState<EvaluationInput["feedback"]>("liked");
+  const [actualRatingValue, setActualRatingValue] = useState("none");
 
   const form = useForm<EvaluationInput>({
     resolver: zodResolver(evaluationSchema),
     defaultValues: {
       feedback: "liked",
-      actualRating: "",
+      actualRating: "none",
     },
   });
 
@@ -85,6 +85,8 @@ export function EvaluationDialog({
           : null;
       const normalizedRecommendationRank =
         recommendation.rank >= 1 ? recommendation.rank : null;
+      const normalizedActualRating =
+        values.actualRating === "none" ? null : Number(values.actualRating);
 
       await evaluationMutation.mutateAsync({
         userKey: activeUser.userKey,
@@ -92,15 +94,13 @@ export function EvaluationDialog({
         predictedRating: normalizedPredictedRating,
         recommendationRank: normalizedRecommendationRank,
         feedback: values.feedback,
-        actualRating:
-          typeof values.actualRating === "number"
-            ? values.actualRating
-            : null,
+        actualRating: Number.isNaN(normalizedActualRating) ? null : normalizedActualRating,
       });
       toast.success("Evaluacion guardada");
       onOpenChange(false);
       form.reset();
       setFeedbackValue("liked");
+      setActualRatingValue("none");
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "No se pudo enviar la evaluacion";
@@ -161,16 +161,26 @@ export function EvaluationDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="actualRating">Calificacion real (opcional)</Label>
-            <Input
-              id="actualRating"
-              type="number"
-              min={0.5}
-              max={5}
-              step={0.5}
-              placeholder="4.5"
-              {...form.register("actualRating")}
-            />
+            <Label>Calificacion real (opcional)</Label>
+            <Select
+              value={actualRatingValue}
+              onValueChange={(value) => {
+                setActualRatingValue(value);
+                form.setValue("actualRating", value);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Sin calificacion</SelectItem>
+                {RATING_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={String(option)}>
+                    {option.toFixed(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {form.formState.errors.actualRating ? (
               <p className="text-xs text-rose-300">
                 {form.formState.errors.actualRating.message}
