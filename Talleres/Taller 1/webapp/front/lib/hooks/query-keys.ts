@@ -14,14 +14,18 @@ export const queryKeys = {
     userKey: string,
     topN: number,
     excludeRated: boolean,
+    excludeEvaluated: boolean,
     includeExplanationPreview: boolean,
+    maxNeighborsPerRatedItem: number,
   ) =>
     [
       "recommendations",
       userKey,
       topN,
       excludeRated,
+      excludeEvaluated,
       includeExplanationPreview,
+      maxNeighborsPerRatedItem,
     ] as const,
   explanation: (userKey: string, movieId: number) =>
     ["recommendation-explanation", userKey, movieId] as const,

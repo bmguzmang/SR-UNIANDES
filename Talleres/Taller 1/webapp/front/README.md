@@ -81,7 +81,37 @@ npm run dev
 
 `http://localhost:3000`
 
-## 3. Environment Variables
+## 3. Run with Docker
+
+Build the image from `front/`:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 \
+  -t cinematch-intelligence-frontend .
+```
+
+Run the container:
+
+```bash
+docker run --rm \
+  --name cinematch-intelligence-frontend \
+  -p 3000:3000 \
+  cinematch-intelligence-frontend
+```
+
+Open:
+
+`http://localhost:3000`
+
+If the backend is also running in Docker and publishes `8000:8000`, the same build argument works because the browser will call `http://localhost:8000`.
+
+Important:
+- `NEXT_PUBLIC_API_BASE_URL` is compiled into the Next.js client bundle during `docker build`.
+- If the backend URL changes, rebuild the image with a new `--build-arg NEXT_PUBLIC_API_BASE_URL=...`.
+- Passing `-e NEXT_PUBLIC_API_BASE_URL=...` only at `docker run` time is not enough for this app.
+
+## 4. Environment Variables
 
 Required:
 
@@ -89,7 +119,7 @@ Required:
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
-## 4. Scripts
+## 5. Scripts
 
 - `npm run dev` - start development server
 - `npm run build` - production build
@@ -97,7 +127,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 - `npm run typecheck` - TypeScript check
 - `npm run lint` - ESLint
 
-## 5. Backend Endpoints Used
+## 6. Backend Endpoints Used
 
 The frontend is integrated with the provided API surface:
 
@@ -119,7 +149,7 @@ The frontend is integrated with the provided API surface:
 - `POST /api/v1/recommendations/evaluations`
 - `GET /api/v1/recommendations/{user_key}/evaluations`
 
-## 6. Routes
+## 7. Routes
 
 - `/login` - identity selection and custom-user creation
 - `/dashboard` - profile, stats, recommendations, ratings history, model info, evaluations
@@ -128,7 +158,7 @@ The frontend is integrated with the provided API surface:
 - `/movies/[movieId]` - movie details + neighbors
 - `/recommendations/[movieId]` - deep explanation view for a recommendation
 
-## 7. Architecture Decisions
+## 8. Architecture Decisions
 
 ### App Router + Client/Server Boundaries
 - App Router is used for route composition and layouting.
@@ -154,7 +184,7 @@ The frontend is integrated with the provided API surface:
 - Dark cinematic palette, subtle gradients, and motion for demo-ready visual quality.
 - Strong loading, empty, and error states across all key workflows.
 
-## 8. Folder Structure
+## 9. Folder Structure
 
 ```text
 app/
@@ -185,7 +215,7 @@ providers/
 types/
 ```
 
-## 9. Demo Flow Recommendation
+## 10. Demo Flow Recommendation
 
 1. Open `/login`
 2. Pick MovieLens user or create a custom user
@@ -194,7 +224,7 @@ types/
 5. Open a recommendation explanation (`/recommendations/[movieId]`)
 6. Submit evaluation feedback and observe it in evaluation history
 
-## 10. Verification Status
+## 11. Verification Status
 
 Validated locally:
 

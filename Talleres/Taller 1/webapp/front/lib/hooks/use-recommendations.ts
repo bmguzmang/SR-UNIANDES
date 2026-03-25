@@ -16,7 +16,9 @@ interface UseRecommendationsParams {
   userKey?: string;
   topN?: number;
   excludeRated?: boolean;
+  excludeEvaluated?: boolean;
   includeExplanationPreview?: boolean;
+  maxNeighborsPerRatedItem?: number;
   enabled?: boolean;
 }
 
@@ -24,7 +26,9 @@ export function useRecommendations(params: UseRecommendationsParams) {
   const userKey = params.userKey;
   const topN = params.topN ?? 10;
   const excludeRated = params.excludeRated ?? true;
+  const excludeEvaluated = params.excludeEvaluated ?? true;
   const includeExplanationPreview = params.includeExplanationPreview ?? true;
+  const maxNeighborsPerRatedItem = params.maxNeighborsPerRatedItem ?? 40;
   const enabled = params.enabled ?? true;
 
   return useQuery({
@@ -32,14 +36,18 @@ export function useRecommendations(params: UseRecommendationsParams) {
       userKey ?? "unknown",
       topN,
       excludeRated,
+      excludeEvaluated,
       includeExplanationPreview,
+      maxNeighborsPerRatedItem,
     ),
     queryFn: () =>
       getRecommendations({
         userKey: userKey as string,
         topN,
         excludeRated,
+        excludeEvaluated,
         includeExplanationPreview,
+        maxNeighborsPerRatedItem,
       }),
     enabled: enabled && Boolean(userKey),
   });

@@ -31,7 +31,9 @@ export interface RecommendationsRequest {
   userKey: string;
   topN?: number;
   excludeRated?: boolean;
+  excludeEvaluated?: boolean;
   includeExplanationPreview?: boolean;
+  maxNeighborsPerRatedItem?: number;
 }
 
 export type RecommendationFeedback =
