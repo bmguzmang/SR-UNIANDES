@@ -100,10 +100,10 @@ export default function DashboardPage() {
         />
         <div className="col-span-1 md:col-span-2">
           <StatCard
-              label="Generos principales"
-              value={topGenres.length ? topGenres.join(" | ") : "N/D"}
-              helper="Perfil de preferencias"
-              icon={Heart}
+            label="Generos principales"
+            value={topGenres.length ? topGenres.join(" | ") : "N/D"}
+            helper="Perfil de preferencias"
+            icon={Heart}
           />
         </div>
 
@@ -150,11 +150,12 @@ export default function DashboardPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground sm:text-left max-w-40 mt-2">
+                  Tamano del lote y vecinos maximos por item calificado
+                </p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground sm:text-right max-w-40">
-              Tamano del lote y vecinos maximos por item calificado
-            </p>
+
           </CardContent>
         </Card>
       </div>
@@ -173,9 +174,9 @@ export default function DashboardPage() {
           />
         ) : null}
         {!recommendationsQuery.isFetching &&
-        !recommendationsQuery.isPending &&
-        !recommendationsQuery.isError &&
-        recommendations.length === 0 ? (
+          !recommendationsQuery.isPending &&
+          !recommendationsQuery.isError &&
+          recommendations.length === 0 ? (
           <EmptyState
             title="Aun no hay recomendaciones"
             description="Genera un lote o agrega mas calificaciones al perfil activo."

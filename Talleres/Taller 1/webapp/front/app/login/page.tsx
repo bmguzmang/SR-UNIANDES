@@ -120,9 +120,11 @@ function LoginScreen() {
                   Busca usuarios existentes de MovieLens o crea un usuario personalizado nuevo.
                 </p>
               </div>
-              <Button onClick={() => setDialogOpen(true)}>
-                Crear usuario personalizado
-              </Button>
+              {!activeUser ? (
+                <Button onClick={() => setDialogOpen(true)}>
+                  Crear usuario personalizado
+                </Button>
+              ) : null}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
@@ -162,11 +164,11 @@ function LoginScreen() {
               <EmptyState
                 title="No se encontraron usuarios"
                 description="Ajusta la busqueda o crea un usuario personalizado para continuar."
-                action={
+                action={!activeUser ? (
                   <Button variant="outline" onClick={() => setDialogOpen(true)}>
                     Crear usuario
                   </Button>
-                }
+                ) : undefined}
               />
             ) : null}
 
@@ -186,13 +188,15 @@ function LoginScreen() {
         </Card>
       </div>
 
-      <CreateUserDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onCreated={() => {
-          router.push("/users/new");
-        }}
-      />
+      {!activeUser ? (
+        <CreateUserDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onCreated={() => {
+            router.push("/users/new");
+          }}
+        />
+      ) : null}
     </main>
   );
 }
