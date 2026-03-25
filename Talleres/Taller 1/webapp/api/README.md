@@ -59,7 +59,49 @@ Health check:
 curl http://127.0.0.1:8000/api/v1/health
 ```
 
-## 4) How to create `model.pkl` (when it is not in the zip)
+## 4) Run with Docker
+
+Build the image from `api/`:
+
+```bash
+docker build -t movie-recommender-api .
+```
+
+Run the container (mount local `data/` and `model.pkl`):
+
+```bash
+docker run --rm \
+  --name movie-recommender-api \
+  -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/model.pkl:/app/model.pkl:ro" \
+  movie-recommender-api
+```
+
+With optional TMDB variables:
+
+```bash
+docker run --rm \
+  --name movie-recommender-api \
+  -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/model.pkl:/app/model.pkl:ro" \
+  -e TMDB_API_KEY="your_key" \
+  -e TMDB_API_READ_ACCESS_TOKEN="your_token" \
+  -e TMDB_POSTER_SIZE="w500" \
+  movie-recommender-api
+```
+
+API docs:
+- `http://127.0.0.1:8000/docs`
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/api/v1/health
+```
+
+## 5) How to create `model.pkl` (when it is not in the zip)
 
 The model must be a trained `Surprise` `KNNWithMeans` configured as:
 - similarity: `pearson`
@@ -107,7 +149,7 @@ Important:
 - Training on MovieLens 20M can take significant RAM/time because item-item similarity matrices are large.
 - The API will reject user-based models.
 
-## 5) Optional environment variables
+## 6) Optional environment variables
 
 Used only for poster images from TMDB:
 

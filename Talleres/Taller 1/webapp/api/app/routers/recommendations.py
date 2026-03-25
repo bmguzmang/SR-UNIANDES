@@ -29,6 +29,7 @@ def recommend(payload: RecommendationRequest, request: Request):
         exclude_rated=payload.excludeRated,
         exclude_evaluated=payload.excludeEvaluated,
         include_explanation_preview=payload.includeExplanationPreview,
+        max_neighbors_per_rated_item=payload.maxNeighborsPerRatedItem,
     )
 
     return {

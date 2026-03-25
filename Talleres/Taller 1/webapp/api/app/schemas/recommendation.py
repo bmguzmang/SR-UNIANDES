@@ -10,6 +10,7 @@ class RecommendationRequest(BaseModel):
     excludeRated: bool = True
     excludeEvaluated: bool = True
     includeExplanationPreview: bool = True
+    maxNeighborsPerRatedItem: int = Field(default=40, ge=1)
 
 
 class RecommendationItem(BaseModel):

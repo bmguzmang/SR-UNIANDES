@@ -27,6 +27,8 @@ import { formatRating } from "@/lib/utils/format";
 import type { RecommendationItem } from "@/types/domain";
 
 const TOP_N_OPTIONS = [5, 10, 15, 20] as const;
+const MAX_NEIGHBOR_OPTIONS = [5, 10, 20, 40, 100] as const;
+const DEFAULT_MAX_NEIGHBORS_PER_RATED_ITEM = 40;
 
 function computeTopGenres(genres: string[][]): string[] {
   const counter = new Map<string, number>();
@@ -44,6 +46,9 @@ export default function DashboardPage() {
   const activeUser = useSessionStore((state) => state.activeUser);
   const [ratingsSort, setRatingsSort] = useState("recent");
   const [topN, setTopN] = useState<number>(TOP_N_OPTIONS[0]);
+  const [maxNeighborsPerRatedItem, setMaxNeighborsPerRatedItem] = useState<number>(
+    DEFAULT_MAX_NEIGHBORS_PER_RATED_ITEM,
+  );
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationItem | null>(null);
   const [evaluationOpen, setEvaluationOpen] = useState(false);
@@ -60,7 +65,9 @@ export default function DashboardPage() {
     userKey: activeUserKey,
     topN,
     excludeRated: true,
+    excludeEvaluated: true,
     includeExplanationPreview: true,
+    maxNeighborsPerRatedItem,
   });
 
   const recommendations = recommendationsQuery.data?.recommendations ?? [];
@@ -78,7 +85,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
         <StatCard
           label="Calificaciones del usuario"
           value={`${profile?.ratingCount ?? ratings.length}`}
@@ -91,37 +98,62 @@ export default function DashboardPage() {
           helper="Intensidad de gusto"
           icon={Star}
         />
-        <StatCard
-          label="Generos principales"
-          value={topGenres.length ? topGenres.join(" | ") : "N/D"}
-          helper="Perfil de preferencias"
-          icon={Heart}
-        />
-        <Card className="bg-slate-950/45">
-          <CardContent className="flex h-full items-center justify-between py-5">
-            <div>
-              <p className="text-xs text-muted-foreground">Top N</p>
-              <Select
-                value={String(topN)}
-                onValueChange={(value) => {
-                  const parsed = Number(value);
-                  setTopN(Math.min(20, Math.max(5, parsed)));
-                }}
-              >
-                <SelectTrigger className="mt-1 w-24">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TOP_N_OPTIONS.map((option) => (
-                    <SelectItem key={option} value={String(option)}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <div className="col-span-1 md:col-span-2">
+          <StatCard
+              label="Generos principales"
+              value={topGenres.length ? topGenres.join(" | ") : "N/D"}
+              helper="Perfil de preferencias"
+              icon={Heart}
+          />
+        </div>
+
+        <Card className="bg-slate-950/45 col-span-1 md:col-span-2">
+          <CardContent className="flex h-full flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <p className="text-xs text-muted-foreground">Top N</p>
+                <Select
+                  value={String(topN)}
+                  onValueChange={(value) => {
+                    const parsed = Number(value);
+                    setTopN(Math.min(20, Math.max(5, parsed)));
+                  }}
+                >
+                  <SelectTrigger className="mt-1 w-24">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TOP_N_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={String(option)}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Vecinos</p>
+                <Select
+                  value={String(maxNeighborsPerRatedItem)}
+                  onValueChange={(value) => {
+                    setMaxNeighborsPerRatedItem(Number(value));
+                  }}
+                >
+                  <SelectTrigger className="mt-1 w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MAX_NEIGHBOR_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={String(option)}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Tamano del lote de recomendaciones
+            <p className="text-xs text-muted-foreground sm:text-right max-w-40">
+              Tamano del lote y vecinos maximos por item calificado
             </p>
           </CardContent>
         </Card>

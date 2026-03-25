@@ -102,7 +102,7 @@
     "userKey": "cu_10",
     "source": "custom",
     "datasetUserId": null,
-    "displayName": "Alvaro",
+    "displayName": "animadas",
     "stats": {
       "ratingsCount": 0,
       "avgRating": null,
@@ -113,7 +113,7 @@
     "userKey": "cu_11",
     "source": "custom",
     "datasetUserId": null,
-    "displayName": "Alvaro",
+    "displayName": "toys",
     "stats": {
       "ratingsCount": 0,
       "avgRating": null,
@@ -124,7 +124,7 @@
     "userKey": "cu_12",
     "source": "custom",
     "datasetUserId": null,
-    "displayName": "Prueba",
+    "displayName": "animado 2",
     "stats": {
       "ratingsCount": 0,
       "avgRating": null,
@@ -135,7 +135,7 @@
     "userKey": "cu_13",
     "source": "custom",
     "datasetUserId": null,
-    "displayName": "Prueba23",
+    "displayName": "ANIMADO 2",
     "stats": {
       "ratingsCount": 0,
       "avgRating": null,
@@ -146,7 +146,29 @@
     "userKey": "cu_14",
     "source": "custom",
     "datasetUserId": null,
-    "displayName": "Prueba23",
+    "displayName": "Bryan",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_15",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "HEROES",
+    "stats": {
+      "ratingsCount": 0,
+      "avgRating": null,
+      "favoriteGenres": []
+    }
+  },
+  {
+    "userKey": "cu_16",
+    "source": "custom",
+    "datasetUserId": null,
+    "displayName": "heroes",
     "stats": {
       "ratingsCount": 0,
       "avgRating": null,

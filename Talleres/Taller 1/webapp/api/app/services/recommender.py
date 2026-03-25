@@ -130,7 +130,7 @@ class RecommenderService:
         exclude_rated: bool = True,
         exclude_evaluated: bool = True,
         include_explanation_preview: bool = True,
-        max_neighbors_per_rated_item: int = 100,
+        max_neighbors_per_rated_item: int = 40,
     ) -> list[dict]:
         user_ratings = self.store.get_user_rating_map(user_key)
         if not user_ratings:
